@@ -189,23 +189,31 @@
               Vendor / launch-week numbers are <strong>directional</strong>, not certified JevBench scores.
             </p>
           </div>
-          <article id="jev-suit" class="card jev-suit-card" aria-labelledby="jev-suit-title">
-            <div class="jev-suit-intro">
-              <p class="eyebrow">Interactive</p>
-              <h3 id="jev-suit-title">Would Jev suit your use case?</h3>
-              <p class="muted">
-                Answer 4 short questions. Jev returns typed Choice / Score / Noul judgments;
-                this page assembles a suitability summary and a coding-tool prompt (Cursor / OpenCode / Claude Code)
-                that tells the agent to <code>use /typesafe-ai</code> and implement the matching pack pattern.
-              </p>
-              <button type="button" class="btn btn-primary" data-jev-suit-begin>Start check</button>
-            </div>
-            <div class="jev-suit-chat" data-jev-suit-chat hidden>
-              <div class="jev-suit-progress muted small" data-jev-suit-progress></div>
-              <div class="jev-suit-log" data-jev-suit-log role="log" aria-live="polite"></div>
-              <div class="jev-suit-controls" data-jev-suit-controls></div>
-              <p class="jev-suit-error" data-jev-suit-error hidden role="alert"></p>
-              <div class="jev-suit-result" data-jev-suit-result hidden></div>
+          <article id="jev-suit" class="card jev-suit-cta-card" aria-labelledby="jev-suit-title">
+            <div class="jev-suit-cta">
+              <div class="jev-suit-cta-copy">
+                <p class="eyebrow">Interactive</p>
+                <h3 id="jev-suit-title">Check if Jev suits your use case</h3>
+                <p class="muted">
+                  Four short questions. Jev returns typed Choice / Score / Noul judgments;
+                  this page assembles a suitability summary and a coding-tool prompt
+                  (Cursor / OpenCode / Claude Code) that tells the agent to <code>use /typesafe-ai</code>
+                  and implement the matching pack pattern.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-jev-suit-begin
+                title="Open suitability check"
+                aria-label="Open suitability check"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M10 2.75l1.15 3.85 3.85 1.15-3.85 1.15L10 12.75l-1.15-3.85L5 7.75l3.85-1.15L10 2.75z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" />
+                  <path d="M15.35 12.4l.5 1.65 1.65.5-1.65.5-.5 1.65-.5-1.65-1.65-.5 1.65-.5.5-1.65z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                </svg>
+                Open suitability check
+              </button>
             </div>
           </article>
 
@@ -401,6 +409,37 @@ cd jev-plays-starcraft-2
         <p>© 2026 JevBench · jevbench.dev · Example leaderboard data only until live scoring ships.</p>
       </div>
     </footer>
+
+    <dialog id="jev-suit-dialog" class="jev-suit-dialog" aria-labelledby="jev-suit-dialog-title">
+      <div class="jev-suit-dialog-panel">
+        <header class="jev-suit-dialog-head">
+          <div class="jev-suit-dialog-titles">
+            <p class="eyebrow">Interactive</p>
+            <h3 id="jev-suit-dialog-title">Would Jev suit your use case?</h3>
+          </div>
+          <button
+            type="button"
+            class="jev-suit-icon-btn"
+            data-jev-suit-close
+            data-keep-enabled="1"
+            title="Close"
+            aria-label="Close"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+            </svg>
+          </button>
+        </header>
+        <div class="jev-suit-chat" data-jev-suit-chat>
+          <div class="jev-suit-progress muted small" data-jev-suit-progress></div>
+          <div class="jev-suit-log" data-jev-suit-log role="log" aria-live="polite"></div>
+          <div class="jev-suit-controls" data-jev-suit-controls></div>
+          <p class="jev-suit-error" data-jev-suit-error hidden role="alert"></p>
+          <div class="jev-suit-result" data-jev-suit-result hidden></div>
+          <p class="visually-hidden" data-jev-suit-copy-status aria-live="polite"></p>
+        </div>
+      </div>
+    </dialog>
 
     <script type="module" src="/src/main.js"></script>
   </body>
