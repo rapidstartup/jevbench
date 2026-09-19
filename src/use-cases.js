@@ -1,7 +1,7 @@
 /**
- * Jev use-case pack: top-20 (X Researcher) + Greg Isenberg 10 product-shaped (19 Sep 2026 PT).
+ * Jev use-case list: 20 core scenarios plus 10 product-shaped additions.
  * Vendor/demo numbers are directional — not certified bench scores.
- * Tranche order: Games (P0) → Platform (P1) → Product-shaped (Greg) → Non-game (rest).
+ * Tranche order: Games (P0) → Platform (P1) → Product-shaped (P1) → Non-game (rest).
  */
 
 export const USE_CASES = [
@@ -283,7 +283,7 @@ export const USE_CASES = [
     writeup:
       "Approve / review / deny agent purchases using price, vendor, user rules, and purchase history, with confidence. Product-shaped gate for spend before money moves.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
@@ -296,7 +296,7 @@ export const USE_CASES = [
     writeup:
       "After an API error: retry, wait, change parameters, switch providers, or escalate. Suggested P1 bench scenario for recovery Choice under failure.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
@@ -309,7 +309,7 @@ export const USE_CASES = [
     writeup:
       "Score reversibility before email send, file delete, money movement, or permission changes. Safety gate: only proceed when reversibility (or human approval) clears the bar.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
@@ -322,7 +322,7 @@ export const USE_CASES = [
     writeup:
       "Per-task tool, data, and spend limits instead of permanent broad access. Jev chooses the scoped capability set for this turn.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
@@ -335,7 +335,7 @@ export const USE_CASES = [
     writeup:
       "Score ~20 next steps in parallel; kill weak branches before expensive reasoning. Suggested P1 bench for high-cardinality Score-then-prune.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
@@ -348,7 +348,7 @@ export const USE_CASES = [
     writeup:
       "From logs, deploys, customers, and health: ignore, rollback, restart, page, or investigate. PagerDuty-shaped; react before Slack. Suggested P1 bench.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
@@ -361,7 +361,7 @@ export const USE_CASES = [
     writeup:
       "Sales / procurement / collections: discount, counter, hold firm, offer terms, or escalate (“Clulely”-like). Closed Choice over live deal state.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
@@ -374,7 +374,7 @@ export const USE_CASES = [
     writeup:
       "Order history, customer value, fraud, item cost, and policy → approve, reject, or review. Confidence-aware refund decisions.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
@@ -387,7 +387,7 @@ export const USE_CASES = [
     writeup:
       "Pick / rematch providers by location, price, quality, availability, cancellation risk, and preferences. Suggested P1 bench for realtime dispatch Choice.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
@@ -400,7 +400,7 @@ export const USE_CASES = [
     writeup:
       "Route only uncertain, expensive, or irreversible decisions to a person. Safety gate companion to calibrated confidence and irreversible-action detection.",
     links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Greg Isenberg" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
 
@@ -412,28 +412,28 @@ export const TRANCHE_META = {
     title: "Games first",
     badge: "P0",
     blurb:
-      "Highest-signal tranche for JevBench: structured state → typed Choice/Score/Noul at sub-second rates. Prefer measuring calibrated confidence, latency under fan-out, and high-cardinality action spaces.",
+      "The clearest testbed for JevBench: fast decisions with a measurable win or loss. Good for judging confidence, speed under pressure, and choices with many options.",
   },
   platform: {
     id: "platform",
     title: "Platform patterns",
     badge: "P1",
     blurb:
-      "Front-door routing and pre-LLM schema selection when the harness mixes Jev with a generative planner.",
+      "Where Jev sits in front of a larger AI system — routing requests and narrowing choices before a bigger model gets involved.",
   },
   product: {
     id: "product",
-    title: "Product-shaped (Greg Isenberg)",
+    title: "Product patterns",
     badge: "P1",
     blurb:
-      "LLMs generate possibilities. Jev chooses what happens next. Product-shaped scenarios from Greg Isenberg’s 10 Jev-native products — esp. self-healing tools, branch pruning, incident control, marketplace dispatch, plus irreversibility and confidence human-queue safety gates.",
+      "LLMs generate possibilities. Jev chooses what happens next. Product-shaped scenarios like self-healing tool calls, branch pruning, incident response, and marketplace dispatch — plus safety gates for irreversible actions and low-confidence cases.",
   },
   nongame: {
     id: "nongame",
     title: "Non-game later",
     badge: "P2",
     blurb:
-      "Support, RAG, safety, and bulk classify schemas are allowed — not the first evidence tranche.",
+      "Support, search, safety, and bulk-classification use cases are valid too — just not the first thing we're benchmarking.",
   },
 };
 

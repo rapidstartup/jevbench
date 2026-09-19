@@ -151,7 +151,7 @@ function renderResult(root, data) {
       </div>
       <pre class="code-block jev-suit-prompt-pre" data-prompt-preview></pre>
     </div>
-    <p class="muted small">Jev returned typed judgments only; this summary and prompt were assembled in code. No API keys leave the server.</p>
+    <p class="muted small">Assembled automatically from your answers — no API keys leave the server.</p>
     <button type="button" class="btn btn-ghost jev-suit-restart" data-jev-suit-restart>Start over</button>
   `;
 
@@ -277,7 +277,7 @@ async function startFlow(root) {
     appendBubble(
       log,
       "bot",
-      `<p>I'll ask a few short questions, then Jev will return typed judgments. Code here turns those into a summary and a prompt you can paste into your coding tool.</p>`
+      `<p>I'll ask a few short questions, then put together a fit summary and a prompt you can paste into your coding tool.</p>`
     );
     appendBubble(log, "bot", `<p>${escapeHtml(data.question.prompt)}</p>`);
     renderQuestion(root, data.question, data.progress, {});
