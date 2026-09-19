@@ -1,0 +1,10 @@
+ui_boot true
+ans1 Support / CX
+ans2 Chat / free-text LLM
+ans3 Route / pick one option
+ans4 Batch / cheap volume
+ui_error null
+ui_summary_snip Strong fit for Jev (System One). Best-fit pack pattern: Support ticket routing (uc-1). Fit probability (Noul): 86%. Choice confidence: 81%. Suggested next step: Try a matching pack pattern on JevBench / a small prototype
+ui_copy_buttons true
+copy_plain_btn_state Copy plain
+copy_md_btn_state Copy failed

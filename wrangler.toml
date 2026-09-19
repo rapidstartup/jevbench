@@ -1,0 +1,7 @@
+name = "jevbench"
+compatibility_date = "2026-09-19"
+pages_build_output_dir = "dist"
+
+[vars]
+SITE_NAME = "JevBench"
+JEV_MODEL = "typesafe/jev-1.13"
