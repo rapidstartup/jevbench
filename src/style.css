@@ -80,7 +80,8 @@ body {
   min-height: 100vh;
 }
 
-body[data-nav-open] {
+body[data-nav-open],
+body[data-jev-suit-open] {
   overflow: hidden;
 }
 
@@ -130,6 +131,18 @@ a:hover {
 .skip-link:focus,
 .skip-link:focus-visible {
   transform: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .container {
@@ -1094,6 +1107,11 @@ h3 {
 }
 .uc-card {
   gap: var(--space-2);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.uc-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+  box-shadow: 0 0 0 1px rgba(110, 231, 183, 0.08);
 }
 .uc-card > :last-child {
   margin-top: auto;
@@ -1162,49 +1180,148 @@ h3 {
   border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
-/* —— Would Jev suit? —— */
-.jev-suit-card {
+/* —— Would Jev suit? (CTA + modal) —— */
+.jev-suit-cta-card {
   margin-bottom: var(--space-7);
   gap: var(--space-4);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  background:
+    linear-gradient(135deg, rgba(110, 231, 183, 0.1), transparent 46%),
+    var(--bg-elev);
+  box-shadow: 0 0 0 1px rgba(110, 231, 183, 0.06);
 }
-.jev-suit-card > :last-child {
+.jev-suit-cta-card > :last-child {
   margin-top: 0;
 }
-.jev-suit-intro h3 {
+.jev-suit-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+.jev-suit-cta-copy h3 {
   margin: 0 0 var(--space-2);
 }
-.jev-suit-intro p {
-  margin: 0 0 var(--space-4);
+.jev-suit-cta-copy p {
+  margin: 0;
 }
-.jev-suit-intro code {
+.jev-suit-cta-copy code {
   font-family: var(--font-mono);
   font-size: 0.9em;
   color: var(--accent-dim);
 }
+.jev-suit-cta .btn-primary {
+  flex-shrink: 0;
+}
+
+.jev-suit-dialog {
+  width: min(42rem, calc(100vw - 1.5rem));
+  max-height: min(88vh, 52rem);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+}
+.jev-suit-dialog:focus {
+  outline: none;
+}
+.jev-suit-dialog::backdrop {
+  background: rgba(10, 11, 15, 0.72);
+  backdrop-filter: blur(6px);
+}
+.jev-suit-dialog-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(88vh, 52rem);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.48),
+    0 0 0 1px rgba(110, 231, 183, 0.08);
+  overflow: hidden;
+}
+.jev-suit-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(110, 231, 183, 0.08), transparent);
+}
+.jev-suit-dialog-head h3 {
+  margin: 0;
+  font-size: var(--step-1);
+}
+.jev-suit-dialog-head .eyebrow {
+  margin-bottom: var(--space-2);
+}
+
+.jev-suit-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  cursor: pointer;
+}
+.jev-suit-icon-btn:hover,
+.jev-suit-icon-btn:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.jev-suit-icon-btn-done {
+  display: none;
+}
+.jev-suit-icon-btn[data-copied="ok"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+.jev-suit-icon-btn[data-copied="ok"] .jev-suit-icon-btn-default {
+  display: none;
+}
+.jev-suit-icon-btn[data-copied="ok"] .jev-suit-icon-btn-done {
+  display: grid;
+}
+.jev-suit-icon-btn[data-copied="err"] {
+  border-color: #f87171;
+  color: #f87171;
+}
+
 .jev-suit-chat {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  border-top: 1px solid var(--border);
-  padding-top: var(--space-4);
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+.jev-suit-progress {
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .jev-suit-log {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  max-height: 280px;
-  overflow-y: auto;
-  padding: var(--space-2);
+  padding: var(--space-3);
   background: #06070a;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
 }
 .jev-suit-bubble {
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
   max-width: 92%;
   font-size: var(--step-0);
-  line-height: var(--lh-normal);
+  line-height: var(--lh-base);
 }
 .jev-suit-bubble p {
   margin: 0;
@@ -1274,19 +1391,39 @@ h3 {
   color: #f87171;
   font-size: var(--step--1);
 }
+.jev-suit-result:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.jev-suit-result:not([hidden]) > :not(.jev-suit-restart) {
+  width: 100%;
+}
 .jev-suit-result h4 {
-  margin: 0 0 var(--space-2);
+  margin: 0;
+  color: var(--accent);
+  font-size: var(--step-1);
 }
 .jev-suit-summary {
-  margin: 0 0 var(--space-4);
+  margin: 0;
   color: var(--text);
-  max-width: 72ch;
+  max-width: none;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--accent) 10%, #06070a);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  border-radius: var(--radius);
+  line-height: var(--lh-base);
 }
 .jev-suit-prompt-block {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  width: 100%;
+  padding: var(--space-3);
+  background: #06070a;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 .jev-suit-prompt-head {
   display: flex;
@@ -1301,15 +1438,47 @@ h3 {
   flex-wrap: wrap;
   gap: var(--space-2);
 }
-.jev-suit-copy {
-  min-height: 36px;
-  padding: 0.35rem 0.75rem;
-}
 .jev-suit-prompt-pre {
   max-height: 220px;
   overflow: auto;
   white-space: pre-wrap;
+  padding-right: 1rem;
+}
+.jev-suit-restart {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.jev-suit-restart:hover {
+  filter: brightness(1.08);
 }
 .jev-suit-loading {
   margin: 0;
+}
+
+@media (min-width: 720px) {
+  .jev-suit-cta {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 480px) {
+  .jev-suit-dialog {
+    width: calc(100vw - 1rem);
+    max-height: calc(100vh - 1rem);
+  }
+  .jev-suit-dialog-panel {
+    max-height: calc(100vh - 1rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-card {
+    transition: none;
+  }
+  .jev-suit-dialog::backdrop {
+    backdrop-filter: none;
+  }
 }
