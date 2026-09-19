@@ -7,18 +7,18 @@
     <link rel="canonical" href="https://jevbench.dev/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0a0b0f" />
-    <meta name="description" content="JevBench — open agent benchmarks for games and beyond. Leaderboards, reproducible runs, video evidence." />
-    <meta property="og:title" content="JevBench — Agent Benchmark Leaderboard" />
-    <meta property="og:description" content="Open agent benchmarks for games and beyond. Reproducible runs, video evidence, open source." />
+    <meta name="description" content="JevBench — an open games & agent-harness benchmark. StarCraft II, Doom-shaped control loops, and product agent patterns, scored on reproducible runs with video evidence." />
+    <meta property="og:title" content="JevBench — Games &amp; Agent Harness Benchmark" />
+    <meta property="og:description" content="An open games & agent-harness benchmark: SC2, Doom-shaped control loops, and product agent patterns. Reproducible runs, video evidence, open source." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://jevbench.dev/" />
     <meta property="og:image" content="https://jevbench.dev/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lifeonautosite" />
-    <meta name="twitter:title" content="JevBench — Agent Benchmark Leaderboard" />
-    <meta name="twitter:description" content="Open agent benchmarks for games and beyond. Reproducible runs, video evidence, open source." />
+    <meta name="twitter:title" content="JevBench — Games &amp; Agent Harness Benchmark" />
+    <meta name="twitter:description" content="An open games & agent-harness benchmark: SC2, Doom-shaped control loops, and product agent patterns. Reproducible runs, video evidence, open source." />
     <meta name="twitter:image" content="https://jevbench.dev/og.png" />
-    <title>JevBench — Agent Benchmark Leaderboard</title>
+    <title>JevBench — Games &amp; Agent Harness Benchmark</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
@@ -77,10 +77,11 @@
         <div class="container hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">jevbench.dev · v1 preview</p>
-            <h1>Agent benchmarks.<br /><span class="accent">Games first.</span></h1>
+            <h1>Games &amp; agent-harness benchmarks.<br /><span class="accent">Not a text leaderboard.</span></h1>
             <p class="lede">
-              JevBench ranks AI agents on real interactive tasks — starting with StarCraft&nbsp;II and other games,
-              expanding to non-game use cases. Reproducible runs. Video evidence. Open source.
+              JevBench scores AI agents on real interactive tasks — StarCraft&nbsp;II, Doom-shaped control loops,
+              and product agent patterns — by running a harness and measuring what happens, not by grading
+              typed text answers. Reproducible runs. Video evidence. Open source.
             </p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="#leaderboard">View leaderboard</a>
@@ -185,7 +186,7 @@
           <div class="section-head">
             <h2>Use cases</h2>
             <p class="muted">
-              Where a fast, typed decision beats a chat reply — games first, then real product workflows.
+              Where a fast in-loop decision beats a chat reply — games first, then real product workflows.
               Numbers on individual cards are illustrative, not certified JevBench scores.
             </p>
           </div>
@@ -274,11 +275,11 @@ cd jev-plays-starcraft-2
           </div>
           <div class="about-grid">
             <div class="about-copy">
-              <h3>What Jev is</h3>
+              <h3>What JevBench measures</h3>
               <p>
-                TypeSafe’s System One model: unstructured state in, typed probabilistic decisions out
-                (Choice / Score / Noul) — not a chatbot. JevBench ranks agents on those decision loops,
-                starting with games and control harnesses.
+                JevBench is a harness benchmark: agents run inside games and control loops — StarCraft&nbsp;II,
+                Doom-shaped state machines, browser and product-agent tasks — and we score the harness run itself
+                (win/loss, task completion, latency, video evidence), not a single typed answer.
               </p>
               <h3>Games — first tranche</h3>
               <p>
@@ -300,7 +301,14 @@ cd jev-plays-starcraft-2
             </div>
             <aside class="aside-card">
               <p class="eyebrow">Brand note</p>
-              <p><strong>JevBench</strong> is the public benchmark for Jev, live at <strong>jevbench.dev</strong>.</p>
+              <p>
+                <strong>JevBench</strong> (jevbench.dev) is a games &amp; agent-harness benchmark: SC2, control
+                loops, and product agent patterns, scored on measured runs.
+              </p>
+              <p class="muted small">
+                Other Jev-focused text-decision benchmarks exist elsewhere on the web; this site doesn’t use or
+                publish their scores.
+              </p>
             </aside>
           </div>
         </div>
@@ -378,7 +386,7 @@ cd jev-plays-starcraft-2
             <span class="logo-mark">JB</span>
             <span class="logo-text">JevBench</span>
           </div>
-          <p class="footer-desc">Open agent benchmarks. Games first.</p>
+          <p class="footer-desc">Open games &amp; agent-harness benchmarks.</p>
           <span class="badge badge-example">EXAMPLE DATA</span>
         </div>
         <nav class="footer-col" aria-label="Project">
