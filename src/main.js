@@ -1,5 +1,5 @@
 /**
- * JevBench v1 — leaderboard filters + use-case pack.
+ * JevBench v1 — leaderboard filters + use-case list.
  * All rows are EXAMPLE DATA until live scoring ships.
  * Vendor/demo numbers are directional — not measured.
  */
@@ -16,7 +16,7 @@ import { initJevSuit } from "./jev-suit.js";
 
 const byId = Object.fromEntries(USE_CASES.map((u) => [u.id, u]));
 
-/** Demo rows mapped to real pack ids. Prefer P0 games first. Not measured. */
+/** Demo rows mapped to real use-case ids. Prefer P0 games first. Not measured. */
 const EXAMPLE_ROWS = [
   {
     rank: 1,
@@ -79,14 +79,14 @@ const EXAMPLE_ROWS = [
     model: "self-heal-tools-demo",
     family: "open",
     usecase: "uc-g2",
-    notes: "EXAMPLE — self-healing tool calls (Greg product; not measured)",
+    notes: "EXAMPLE — self-healing tool calls (product pattern; not measured)",
   },
   {
     rank: 10,
     model: "branch-prune-demo",
     family: "grok",
     usecase: "uc-g5",
-    notes: "EXAMPLE — agent branch pruning (Greg product; not measured)",
+    notes: "EXAMPLE — agent branch pruning (product pattern; not measured)",
   },
 ];
 
@@ -139,7 +139,7 @@ function populateUsecaseFilter() {
   const groups = [
     { key: "games", label: "Games first (P0)" },
     { key: "platform", label: "Platform patterns (P1)" },
-    { key: "product", label: "Product-shaped — Greg (P1)" },
+    { key: "product", label: "Product patterns (P1)" },
     { key: "nongame", label: "Non-game later (P2)" },
   ];
   for (const g of groups) {
@@ -283,4 +283,3 @@ document.getElementById("contact-form")?.addEventListener("submit", (e) => {
 
 renderRows();
 initJevSuit();
-/* deploy 2026-09-19T15:28:00+08:00 greg-product tranche */
