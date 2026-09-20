@@ -3,8 +3,6 @@ const drawer = document.getElementById("mobile-nav");
 const scrim = document.querySelector(".nav-scrim");
 const main = document.getElementById("main");
 const footer = document.querySelector(".site-footer");
-const exampleStrip = document.querySelector(".example-strip");
-
 if (!toggle || !drawer || !scrim) {
   // Header markup missing — skip drawer behaviour.
 } else {
@@ -12,7 +10,7 @@ if (!toggle || !drawer || !scrim) {
   let closeTimer = 0;
   drawer.inert = true;
 
-  const inertTargets = [main, footer, exampleStrip].filter(Boolean);
+  const inertTargets = [main, footer].filter(Boolean);
 
   function focusables() {
     return [toggle, ...drawer.querySelectorAll('a[href], button:not([disabled])')];

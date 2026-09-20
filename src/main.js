@@ -1,7 +1,7 @@
 /**
  * JevBench v1 — leaderboard filters + use-case list.
- * All rows are EXAMPLE DATA until live scoring ships.
- * Vendor/demo numbers are directional — not measured.
+ * Rows are measured smokes / harness runs (ours) or official-cited cards.
+ * No fabricated win rates.
  */
 
 import "@fontsource-variable/ibm-plex-sans/wght.css";
@@ -16,77 +16,79 @@ import { initJevSuit } from "./jev-suit.js";
 
 const byId = Object.fromEntries(USE_CASES.map((u) => [u.id, u]));
 
-/** Demo rows mapped to real use-case ids. Prefer P0 games first. Not measured. */
-const EXAMPLE_ROWS = [
+/** Measured / smoked results (20 Sep 2026 PT). Honest — no invented win rates. */
+const ROWS = [
   {
     rank: 1,
-    model: "jev-doom-demo",
-    family: "open",
-    usecase: "uc-17",
-    notes: "EXAMPLE — structured-state Doom shape (not measured)",
+    model: "TypeSafe Jev 1.13",
+    family: "jev",
+    usecase: "uc-20",
+    notes: "SC2 harness control · 825 Jev calls · ~$0.22 OpenRouter · MarineMicro unwinnable as Terran; pivoting to campaign",
+    scoreLabel: "38 runs · 0 wins",
+    source: "ours",
   },
   {
     rank: 2,
-    model: "jev-wikirace-demo",
-    family: "open",
-    usecase: "uc-18",
-    notes: "EXAMPLE — high-cardinality Choice (not measured)",
+    model: "LocalJev",
+    family: "jev",
+    usecase: "uc-20",
+    notes: "Bun :8080 · OpenRouter gpt-4o-mini upstream",
+    scoreLabel: "smoke OK",
+    source: "ours",
   },
   {
     rank: 3,
-    model: "jev-browser-demo",
-    family: "open",
-    usecase: "uc-19",
-    notes: "EXAMPLE — browser-use/jev-ultrafast shape (not measured)",
+    model: "Laya",
+    family: "jev",
+    usecase: "uc-20",
+    notes: "PyPI · box CPU · predict ~0.14s after load",
+    scoreLabel: "smoke OK",
+    source: "ours",
   },
   {
     rank: 4,
-    model: "jev-sc2-demo",
-    family: "claude",
+    model: "OpenJev (browser)",
+    family: "jev",
     usecase: "uc-20",
-    notes: "EXAMPLE — StarCraft / RTS cluster (not measured)",
+    notes: "openjev.com MiniCPM WebGPU · MSI Chrome OK · box blocked (no GPU)",
+    scoreLabel: "smoke OK (MSI)",
+    source: "ours",
   },
   {
     rank: 5,
-    model: "jev-mario-demo",
-    family: "gpt",
+    model: "jeff",
+    family: "jev",
     usecase: "uc-20",
-    notes: "EXAMPLE — emulator RAM→JSON control (not measured)",
+    notes: "HTTP smoke on box",
+    scoreLabel: "smoke OK",
+    source: "ours",
   },
   {
     rank: 6,
-    model: "jev-drone-demo",
-    family: "gemini",
+    model: "Laya-MLX",
+    family: "jev",
     usecase: "uc-20",
-    notes: "EXAMPLE — drone advisory loop (not measured)",
+    notes: "Official: mizorewww/laya-mlx BENCHMARKS · M3 Max FP16 · EN 13.42 ms / ML 7.39 ms P50 · not run here (Mac-only)",
+    scoreLabel: "13.4 ms EN p50",
+    source: "official",
   },
   {
     rank: 7,
-    model: "cascade-front-door-demo",
-    family: "grok",
+    model: "Gemini Flash + Jev fixtures",
+    family: "gemini",
     usecase: "uc-6",
-    notes: "EXAMPLE — Jev → code → specialist LLM (not measured)",
+    notes: "Dual-brain dry-run · Gemini 2.5 Flash + Jev Goler · 3/3 sensible · pending live traynor01 with guide",
+    scoreLabel: "3/3 dry-run OK",
+    source: "ours",
   },
   {
     rank: 8,
-    model: "tool-unfurl-demo",
-    family: "claude",
-    usecase: "uc-10",
-    notes: "EXAMPLE — dynamic tool schema unfurl (not measured)",
-  },
-  {
-    rank: 9,
-    model: "self-heal-tools-demo",
-    family: "open",
-    usecase: "uc-g2",
-    notes: "EXAMPLE — self-healing tool calls (product pattern; not measured)",
-  },
-  {
-    rank: 10,
-    model: "branch-prune-demo",
-    family: "grok",
-    usecase: "uc-g5",
-    notes: "EXAMPLE — agent branch pruning (product pattern; not measured)",
+    model: "NanoJev",
+    family: "jev",
+    usecase: "uc-20",
+    notes: "Cloned only · smoke not run yet",
+    scoreLabel: "pending smoke",
+    source: "ours",
   },
 ];
 
@@ -109,6 +111,13 @@ function escapeHtml(str) {
 function categoryBadge(cat) {
   if (cat === "game") return '<span class="badge badge-game">GAME</span>';
   return '<span class="badge badge-nongame">NON-GAME</span>';
+}
+
+function sourceBadge(source) {
+  if (source === "official") {
+    return '<span class="badge badge-official">OFFICIAL</span>';
+  }
+  return '<span class="badge badge-ours">OURS</span>';
 }
 
 function priorityBadge(p) {
@@ -199,8 +208,8 @@ function renderUseCasesSection() {
 
 function updateCount(shown) {
   if (!resultCount) return;
-  const total = EXAMPLE_ROWS.length;
-  resultCount.textContent = `Showing ${shown} of ${total} example rows`;
+  const total = ROWS.length;
+  resultCount.textContent = `Showing ${shown} of ${total} rows`;
 }
 
 function renderRows() {
@@ -208,7 +217,7 @@ function renderRows() {
   const model = filterModel.value;
   const cat = filterCategory.value;
 
-  const enriched = EXAMPLE_ROWS.map(enrichRow);
+  const enriched = ROWS.map(enrichRow);
   const filtered = enriched.filter((r) => {
     if (uc !== "all" && r.usecase !== uc) return false;
     if (model !== "all" && r.family !== model) return false;
@@ -219,19 +228,19 @@ function renderRows() {
   updateCount(filtered.length);
 
   if (!filtered.length) {
-    tbody.innerHTML = `<tr class="lb-empty"><td colspan="6" class="muted">No example rows match these filters.</td></tr>`;
+    tbody.innerHTML = `<tr class="lb-empty"><td colspan="6" class="muted">No rows match these filters.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = filtered
     .map(
       (r) => `
-    <tr data-usecase="${r.usecase}" data-model="${r.family}" data-category="${r.category}">
+    <tr data-usecase="${r.usecase}" data-model="${r.family}" data-category="${r.category}" data-source="${escapeHtml(r.source)}">
       <td class="rank">${String(r.rank).padStart(2, "0")}</td>
-      <td class="model"><span class="model-name">${escapeHtml(r.model)}</span> <span class="badge badge-example">EXAMPLE</span></td>
+      <td class="model"><span class="model-name">${escapeHtml(r.model)}</span> ${sourceBadge(r.source)}</td>
       <td data-label="Use case"><a class="uc-row-link" href="#${escapeHtml(r.usecase)}">${escapeHtml(r.usecaseLabel)}</a></td>
       <td data-label="Category">${categoryBadge(r.category)}</td>
-      <td class="score" data-label="Score"><span class="score-pending">Not scored</span></td>
+      <td class="score" data-label="Score"><span class="score-label">${escapeHtml(r.scoreLabel)}</span></td>
       <td class="muted notes" data-label="Notes">${escapeHtml(r.notes)}</td>
     </tr>`
     )

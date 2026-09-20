@@ -7,18 +7,18 @@
     <link rel="canonical" href="https://jevbench.dev/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0a0b0f" />
-    <meta name="description" content="JevBench — an open games & agent-harness benchmark. StarCraft II, Doom-shaped control loops, and product agent patterns, scored on reproducible runs with video evidence." />
-    <meta property="og:title" content="JevBench — Games &amp; Agent Harness Benchmark" />
-    <meta property="og:description" content="An open games & agent-harness benchmark: SC2, Doom-shaped control loops, and product agent patterns. Reproducible runs, video evidence, open source." />
+    <meta name="description" content="JevBench measures Jev and open alternatives on interactive harnesses — fast structured decisions for agents that act. Starting with StarCraft II, expanding to product loops. Reproducible runs. Open source." />
+    <meta property="og:title" content="JevBench — Decision models for live agents" />
+    <meta property="og:description" content="Bench Jev and open alternatives on interactive harnesses. Fast structured probabilistic decisions from app state. SC2 first, then product loops. Reproducible runs. Open source." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://jevbench.dev/" />
     <meta property="og:image" content="https://jevbench.dev/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lifeonautosite" />
-    <meta name="twitter:title" content="JevBench — Games &amp; Agent Harness Benchmark" />
-    <meta name="twitter:description" content="An open games & agent-harness benchmark: SC2, Doom-shaped control loops, and product agent patterns. Reproducible runs, video evidence, open source." />
+    <meta name="twitter:title" content="JevBench — Decision models for live agents" />
+    <meta name="twitter:description" content="Bench Jev and open alternatives on interactive harnesses. Fast structured probabilistic decisions from app state. SC2 first, then product loops. Reproducible runs. Open source." />
     <meta name="twitter:image" content="https://jevbench.dev/og.png" />
-    <title>JevBench — Games &amp; Agent Harness Benchmark</title>
+    <title>JevBench — Decision models for live agents</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
@@ -65,23 +65,17 @@
       <a href="#sponsor" class="btn btn-primary nav-drawer-cta">Sponsor</a>
     </nav>
 
-    <div class="example-strip" role="note">
-      <div class="container example-banner">
-        <strong>EXAMPLE DATA</strong>
-        <span>— the leaderboard shows demo placeholders. No runs have been scored yet.</span>
-      </div>
-    </div>
-
     <main id="main">
       <section id="home" class="section hero">
         <div class="container hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">jevbench.dev · v1 preview</p>
-            <h1>Games &amp; agent-harness benchmarks.<br /><span class="accent">Not a text leaderboard.</span></h1>
+            <h1>Typed decisions for agents that act.<br /><span class="accent">Bench Jev and the open alternatives.</span></h1>
             <p class="lede">
-              JevBench scores AI agents on real interactive tasks — StarCraft&nbsp;II, Doom-shaped control loops,
-              and product agent patterns — by running a harness and measuring what happens, not by grading
-              typed text answers. Reproducible runs. Video evidence. Open source.
+              Jev is a fast structured probabilistic decision model — pick actions from app state, not chat replies.
+              This site measures Jev, Jev-compatible copycats, and dual-brain (guide LLM + Jev) setups on interactive
+              harnesses, starting with StarCraft&nbsp;II and expanding to product loops. Reproducible runs. Open source.
+              No win claims we don’t have.
             </p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="#leaderboard">View leaderboard</a>
@@ -93,8 +87,8 @@
             <dl class="status-list">
               <dt>Harness</dt>
               <dd>v0.1</dd>
-              <dt>Scored runs</dt>
-              <dd>0</dd>
+              <dt>SC2 runs</dt>
+              <dd>38 (0 wins yet)</dd>
               <dt>Games</dt>
               <dd>1 (StarCraft II)</dd>
               <dt>Evidence</dt>
@@ -125,6 +119,7 @@
               <span>Model</span>
               <select id="filter-model" aria-label="Filter by model">
                 <option value="all">All models</option>
+                <option value="jev">Jev / decision</option>
                 <option value="claude">Claude</option>
                 <option value="gpt">GPT</option>
                 <option value="gemini">Gemini</option>
@@ -152,12 +147,12 @@
           </div>
 
           <p id="result-count" class="result-count" aria-live="polite"></p>
-          <p class="bench-status">Harness v0.1 · 0 scored runs · 1 game (StarCraft II) · updated —</p>
+          <p class="bench-status">Harness v0.1 · 38 SC2 runs · 1 game (StarCraft II) · updated 20 Sep 2026</p>
 
           <div class="table-wrap" tabindex="0" role="region" aria-label="Leaderboard results">
             <table class="lb-table" id="lb-table">
               <caption class="table-caption">
-                <strong>EXAMPLE DATA</strong> — the leaderboard shows demo placeholders. No runs have been scored yet.
+                Early results — measured smokes and harness runs. Official-cited rows are labeled. No fabricated win rates.
               </caption>
               <thead>
                 <tr>
@@ -175,7 +170,8 @@
             </table>
           </div>
           <p class="table-foot muted">
-            All rows marked <span class="badge badge-example">EXAMPLE</span>. Live results and video clips (R2) coming soon.
+            Rows marked <span class="badge badge-ours">OURS</span> are measured here;
+            <span class="badge badge-official">OFFICIAL</span> cites upstream cards/benches. Video clips (R2) coming with live scoring.
           </p>
         </div>
       </section>
@@ -186,7 +182,7 @@
           <div class="section-head">
             <h2>Use cases</h2>
             <p class="muted">
-              Where a fast in-loop decision beats a chat reply — games first, then real product workflows.
+              Where a fast in-loop decision beats a chat reply — decision models on harnesses, games first, then product workflows.
               Numbers on individual cards are illustrative, not certified JevBench scores.
             </p>
           </div>
@@ -277,16 +273,23 @@ cd jev-plays-starcraft-2
             <div class="about-copy">
               <h3>What JevBench measures</h3>
               <p>
-                JevBench is a harness benchmark: agents run inside games and control loops — StarCraft&nbsp;II,
-                Doom-shaped state machines, browser and product-agent tasks — and we score the harness run itself
-                (win/loss, task completion, latency, video evidence), not a single typed answer.
+                JevBench is a decision-model bench: we measure Jev and open alternatives on interactive harnesses —
+                win/loss, task completion, latency, and (soon) video evidence — not a single typed answer.
+                Games are the first harness surface; product loops come next.
               </p>
-              <h3>Games — first tranche</h3>
+              <h3>Harness surface — StarCraft&nbsp;II first</h3>
               <p>
                 Interactive games are a harsh, observable testbed: partial observability, long horizons,
                 and clear win/loss. We’re starting with StarCraft&nbsp;II and related RTS / planning tasks
                 where agents must act under time pressure. See the full
                 <a href="#use-cases">list of use cases</a> (including Doom, Wikiracing, browser use, Mario/StarCraft/drone).
+              </p>
+              <h3>Games roadmap — planned / PARKED</h3>
+              <p>
+                <strong>Fortnite</strong> (Creative-only adapter plan) and <strong>Minecraft</strong>
+                (Mineflayer / Mindcraft-class structured adapter plan) are on the roadmap as
+                <strong>PARKED</strong> — planning docs only; no live scored runs, videos, or leaderboard
+                rows yet. Live game count remains StarCraft&nbsp;II until a harness smoke ships.
               </p>
               <h3>Non-game — later</h3>
               <p>
@@ -302,12 +305,12 @@ cd jev-plays-starcraft-2
             <aside class="aside-card">
               <p class="eyebrow">Brand note</p>
               <p>
-                <strong>JevBench</strong> (jevbench.dev) is a games &amp; agent-harness benchmark: SC2, control
-                loops, and product agent patterns, scored on measured runs.
+                <strong>JevBench</strong> (jevbench.dev) benches decision models for live agents — Jev,
+                copycats, and dual-brain setups — on interactive harnesses. SC2 is the first surface.
               </p>
               <p class="muted small">
                 Other Jev-focused text-decision benchmarks exist elsewhere on the web; this site doesn’t use or
-                publish their scores.
+                publish their scores unless labeled official-cited.
               </p>
             </aside>
           </div>
@@ -386,8 +389,7 @@ cd jev-plays-starcraft-2
             <span class="logo-mark">JB</span>
             <span class="logo-text">JevBench</span>
           </div>
-          <p class="footer-desc">Open games &amp; agent-harness benchmarks.</p>
-          <span class="badge badge-example">EXAMPLE DATA</span>
+          <p class="footer-desc">Decision models for live agents. Open harnesses.</p>
         </div>
         <nav class="footer-col" aria-label="Project">
           <h2>Project</h2>
@@ -406,7 +408,7 @@ cd jev-plays-starcraft-2
         </nav>
       </div>
       <div class="container footer-legal">
-        <p>© 2026 JevBench · jevbench.dev · Example leaderboard data only until live scoring ships.</p>
+        <p>© 2026 JevBench · jevbench.dev · Early measured results; no fabricated win rates.</p>
       </div>
     </footer>
 
