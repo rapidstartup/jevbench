@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href="https://jevbench.dev/leaderboard" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0b0f" />
+    <meta name="description" content="JevBench leaderboard — Jev models, gaming results, and decision-model benchmarks. Fast structured decisions for agents that act." />
+    <meta property="og:title" content="Leaderboard — JevBench" />
+    <meta property="og:description" content="Bench Jev and open alternatives on interactive harnesses. Gaming results, model comparisons, and reproducible runs." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jevbench.dev/leaderboard" />
+    <meta property="og:image" content="https://jevbench.dev/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lifeonautosite" />
+    <meta name="twitter:title" content="Leaderboard — JevBench" />
+    <meta name="twitter:description" content="Bench Jev and open alternatives on interactive harnesses. Gaming results, model comparisons, and reproducible runs." />
+    <meta name="twitter:image" content="https://jevbench.dev/og.png" />
+    <title>Leaderboard — JevBench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="logo" href="/">
+          <span class="logo-mark">JB</span>
+          <span class="logo-text">JevBench</span>
+        </a>
+        <nav class="nav" aria-label="Main">
+          <a href="/" aria-current="page">Home</a>
+          <a href="/leaderboard">Leaderboard</a>
+          <a href="/#use-cases">Use cases</a>
+          <a href="/#open-source">Open source</a>
+          <a href="/#about">About</a>
+          <a href="/#support">Support</a>
+          <a href="/#sponsor" class="nav-cta">Sponsor</a>
+        </nav>
+        <div class="header-actions">
+          <a href="/#sponsor" class="nav-cta">Sponsor</a>
+          <button
+            class="nav-toggle"
+            type="button"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <button class="nav-scrim" type="button" data-nav-close hidden aria-label="Close menu"></button>
+    <nav id="mobile-nav" class="mobile-nav" aria-label="Main" aria-hidden="true">
+      <a href="/">Home</a>
+      <a href="/leaderboard" aria-current="page">Leaderboard</a>
+      <a href="/#use-cases">Use cases</a>
+      <a href="/#open-source">Open source</a>
+      <a href="/#about">About</a>
+      <a href="/#support">Support</a>
+      <a href="/#sponsor" class="btn btn-primary nav-drawer-cta">Sponsor</a>
+    </nav>
+
+    <main id="main">
+      <section class="section leaderboard-hero">
+        <div class="container-wide">
+          <div class="section-head">
+            <p class="eyebrow">jevbench.dev · v1 preview</p>
+            <h1>Leaderboard</h1>
+            <p class="lede">Measured results and official citations. Jev models, gaming harnesses, and decision-model benchmarks. No fabricated win rates.</p>
+          </div>
+
+          <div class="lb-stats-grid">
+            <div class="lb-stat-card">
+              <div class="lb-stat-icon">🎯</div>
+              <div class="lb-stat-content">
+                <p class="lb-stat-label">Models tested</p>
+                <p class="lb-stat-value" id="stat-models">8</p>
+              </div>
+            </div>
+            <div class="lb-stat-card">
+              <div class="lb-stat-icon">🎮</div>
+              <div class="lb-stat-content">
+                <p class="lb-stat-label">Harness runs</p>
+                <p class="lb-stat-value" id="stat-runs">38</p>
+              </div>
+            </div>
+            <div class="lb-stat-card">
+              <div class="lb-stat-icon">🏆</div>
+              <div class="lb-stat-content">
+                <p class="lb-stat-label">Games tested</p>
+                <p class="lb-stat-value" id="stat-games">1</p>
+                <p class="lb-stat-note">StarCraft II</p>
+              </div>
+            </div>
+            <div class="lb-stat-card">
+              <div class="lb-stat-icon">⚡</div>
+              <div class="lb-stat-content">
+                <p class="lb-stat-label">Wins verified</p>
+                <p class="lb-stat-value lb-stat-value-warn" id="stat-wins">0</p>
+                <p class="lb-stat-note">Honest results</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="lb-tabs" role="tablist" aria-label="Leaderboard views">
+            <button
+              type="button"
+              role="tab"
+              class="lb-tab"
+              id="tab-jev-models"
+              aria-selected="true"
+              aria-controls="panel-jev-models"
+              data-tab="jev-models"
+            >
+              Jev Models
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="lb-tab"
+              id="tab-gaming"
+              aria-selected="false"
+              aria-controls="panel-gaming"
+              data-tab="gaming"
+            >
+              Gaming
+            </button>
+            <div class="lb-tab-indicator" aria-hidden="true"></div>
+          </div>
+
+          <div class="lb-panels">
+            <div
+              role="tabpanel"
+              id="panel-jev-models"
+              aria-labelledby="tab-jev-models"
+              class="lb-panel active"
+              data-panel="jev-models"
+            >
+              <p class="panel-desc">Jev-class decision models against a shared test suite</p>
+              
+              <div class="filters" id="filters-jev">
+                <label class="filter">
+                  <span>Use case</span>
+                  <select id="filter-jev-usecase" aria-label="Filter by use case">
+                    <option value="all">All use cases</option>
+                  </select>
+                </label>
+                <label class="filter">
+                  <span>Category</span>
+                  <select id="filter-jev-category" aria-label="Filter by category">
+                    <option value="all">Game + non-game</option>
+                    <option value="game">Game only</option>
+                    <option value="nongame">Non-game only</option>
+                  </select>
+                </label>
+              </div>
+
+              <p id="result-count-jev" class="result-count" aria-live="polite"></p>
+
+              <div class="table-wrap" tabindex="0" role="region" aria-label="Jev models results">
+                <table class="lb-table" id="lb-table-jev">
+                  <caption class="table-caption">
+                    Measured smokes and harness runs. Official-cited rows are labeled. No fabricated scores.
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Model</th>
+                      <th scope="col">Use case</th>
+                      <th scope="col">Category</th>
+                      <th scope="col">Score</th>
+                      <th scope="col">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lb-body-jev">
+                  </tbody>
+                </table>
+              </div>
+              <p class="table-foot muted">
+                Rows marked <span class="badge badge-ours">OURS</span> are measured here;
+                <span class="badge badge-official">OFFICIAL</span> cites upstream cards/benches.
+              </p>
+            </div>
+
+            <div
+              role="tabpanel"
+              id="panel-gaming"
+              aria-labelledby="tab-gaming"
+              class="lb-panel"
+              data-panel="gaming"
+              hidden
+            >
+              <p class="panel-desc">Gaming harness results by game and provider — StarCraft II first</p>
+              
+              <div class="filters" id="filters-gaming">
+                <label class="filter">
+                  <span>Game</span>
+                  <select id="filter-gaming-game" aria-label="Filter by game">
+                    <option value="all">All games</option>
+                    <option value="sc2">StarCraft II</option>
+                  </select>
+                </label>
+                <label class="filter">
+                  <span>Provider</span>
+                  <select id="filter-gaming-provider" aria-label="Filter by provider">
+                    <option value="all">All providers</option>
+                    <option value="typesafe">TypeSafe</option>
+                    <option value="openrouter">OpenRouter</option>
+                    <option value="local">Local</option>
+                  </select>
+                </label>
+              </div>
+
+              <p id="result-count-gaming" class="result-count" aria-live="polite"></p>
+
+              <div class="table-wrap" tabindex="0" role="region" aria-label="Gaming results">
+                <table class="lb-table" id="lb-table-gaming">
+                  <caption class="table-caption">
+                    StarCraft II harness v0.1 · 38 runs · 0 wins yet · honest incomplete results
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Game</th>
+                      <th scope="col">Agent / model</th>
+                      <th scope="col">Provider</th>
+                      <th scope="col">Wins</th>
+                      <th scope="col">Runs</th>
+                      <th scope="col">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lb-body-gaming">
+                  </tbody>
+                </table>
+              </div>
+              <p class="table-foot muted">
+                Early harness results — no wins yet on MarineMicro unwinnable-as-Terran scenario. Campaign pivots incoming.
+              </p>
+            </div>
+          </div>
+
+          <p class="bench-status">Harness v0.1 · 38 SC2 runs · 1 game (StarCraft II) · updated 20 Sep 2026</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <div class="footer-brand-lockup">
+            <span class="logo-mark">JB</span>
+            <span class="logo-text">JevBench</span>
+          </div>
+          <p class="footer-desc">Decision models for live agents. Open harnesses.</p>
+        </div>
+        <nav class="footer-col" aria-label="Project">
+          <h2>Project</h2>
+          <a href="/leaderboard">Leaderboard</a>
+          <a href="/#use-cases">Use cases</a>
+          <a href="/#open-source">Open source</a>
+          <a href="/#about">About</a>
+          <a href="/#open-source">Downloads</a>
+        </nav>
+        <nav class="footer-col" aria-label="Community">
+          <h2>Community</h2>
+          <a href="https://github.com/rapidstartup/jev-plays-starcraft-2" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://x.com/lifeonautosite" target="_blank" rel="noopener">X / @lifeonautosite</a>
+          <a href="/#support">Support</a>
+          <a href="/#sponsor">Sponsor</a>
+        </nav>
+      </div>
+      <div class="container footer-legal">
+        <p>© 2026 JevBench · jevbench.dev · Early measured results; no fabricated win rates.</p>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/leaderboard.js"></script>
+  </body>
+</html>

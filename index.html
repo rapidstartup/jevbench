@@ -31,7 +31,8 @@
           <span class="logo-text">JevBench</span>
         </a>
         <nav class="nav" aria-label="Main">
-          <a href="#leaderboard">Leaderboard</a>
+          <a href="/">Home</a>
+          <a href="/leaderboard">Leaderboard</a>
           <a href="#use-cases">Use cases</a>
           <a href="#open-source">Open source</a>
           <a href="#about">About</a>
@@ -57,7 +58,8 @@
 
     <button class="nav-scrim" type="button" data-nav-close hidden aria-label="Close menu"></button>
     <nav id="mobile-nav" class="mobile-nav" aria-label="Main" aria-hidden="true">
-      <a href="#leaderboard">Leaderboard</a>
+      <a href="/">Home</a>
+      <a href="/leaderboard">Leaderboard</a>
       <a href="#use-cases">Use cases</a>
       <a href="#open-source">Open source</a>
       <a href="#about">About</a>
@@ -78,7 +80,7 @@
               No win claims we don’t have.
             </p>
             <div class="hero-actions">
-              <a class="btn btn-primary" href="#leaderboard">View leaderboard</a>
+              <a class="btn btn-primary" href="/leaderboard">View leaderboard</a>
               <a class="btn btn-ghost" href="https://github.com/rapidstartup/jev-plays-starcraft-2" target="_blank" rel="noopener">GitHub →</a>
             </div>
           </div>
@@ -103,56 +105,14 @@
       <section id="leaderboard" class="section">
         <div class="container-wide">
           <div class="section-head">
-            <h2>Leaderboard</h2>
-            <p class="muted">Filter by use case, model family, and game vs. non-game. Latency and cost views arrive with live scoring.</p>
+            <h2>Leaderboard preview</h2>
+            <p class="muted">Top results across Jev models and gaming harnesses — measured and official-cited.</p>
           </div>
 
-          <div class="filters" id="filters">
-            <label class="filter">
-              <span>Use case</span>
-              <select id="filter-usecase" aria-label="Filter by use case">
-                <option value="all">All use cases</option>
-                <!-- options filled by main.js from the use-case list -->
-              </select>
-            </label>
-            <label class="filter">
-              <span>Model</span>
-              <select id="filter-model" aria-label="Filter by model">
-                <option value="all">All models</option>
-                <option value="jev">Jev / decision</option>
-                <option value="claude">Claude</option>
-                <option value="gpt">GPT</option>
-                <option value="gemini">Gemini</option>
-                <option value="grok">Grok</option>
-                <option value="open">Open weights</option>
-              </select>
-            </label>
-            <label class="filter">
-              <span>Category</span>
-              <select id="filter-category" aria-label="Filter by category">
-                <option value="all">Game + non-game</option>
-                <option value="game">Game only</option>
-                <option value="nongame">Non-game only</option>
-              </select>
-            </label>
-            <div class="view-toggles" role="group" aria-label="Leaderboard view">
-              <button type="button" class="toggle active" data-view="score" aria-pressed="true">Score</button>
-              <button type="button" class="toggle" data-view="latency" disabled aria-disabled="true">
-                Latency <span class="soon">SOON</span>
-              </button>
-              <button type="button" class="toggle" data-view="cost" disabled aria-disabled="true">
-                Cost <span class="soon">SOON</span>
-              </button>
-            </div>
-          </div>
-
-          <p id="result-count" class="result-count" aria-live="polite"></p>
-          <p class="bench-status">Harness v0.1 · 38 SC2 runs · 1 game (StarCraft II) · updated 20 Sep 2026</p>
-
-          <div class="table-wrap" tabindex="0" role="region" aria-label="Leaderboard results">
-            <table class="lb-table" id="lb-table">
+          <div class="table-wrap" tabindex="0" role="region" aria-label="Leaderboard summary">
+            <table class="lb-table lb-table-summary" id="lb-table-summary">
               <caption class="table-caption">
-                Early results — measured smokes and harness runs. Official-cited rows are labeled. No fabricated win rates.
+                Early results — measured smokes and harness runs. Official-cited rows are labeled.
               </caption>
               <thead>
                 <tr>
@@ -161,18 +121,17 @@
                   <th scope="col">Use case</th>
                   <th scope="col">Category</th>
                   <th scope="col">Score</th>
-                  <th scope="col">Notes</th>
                 </tr>
               </thead>
-              <tbody id="lb-body">
+              <tbody id="lb-body-summary">
                 <!-- filled by main.js -->
               </tbody>
             </table>
           </div>
-          <p class="table-foot muted">
-            Rows marked <span class="badge badge-ours">OURS</span> are measured here;
-            <span class="badge badge-official">OFFICIAL</span> cites upstream cards/benches. Video clips (R2) coming with live scoring.
-          </p>
+          <div class="lb-cta-wrap">
+            <a class="btn btn-primary btn-lg" href="/leaderboard">View full leaderboard</a>
+          </div>
+          <p class="bench-status">Harness v0.1 · 38 SC2 runs · 1 game (StarCraft II) · updated 20 Sep 2026</p>
         </div>
       </section>
 
@@ -393,11 +352,11 @@ cd jev-plays-starcraft-2
         </div>
         <nav class="footer-col" aria-label="Project">
           <h2>Project</h2>
-          <a href="#leaderboard">Leaderboard</a>
-          <a href="#use-cases">Use cases</a>
-          <a href="#open-source">Open source</a>
-          <a href="#about">About</a>
-          <a href="#open-source">Downloads</a>
+          <a href="/leaderboard">Leaderboard</a>
+          <a href="/#use-cases">Use cases</a>
+          <a href="/#open-source">Open source</a>
+          <a href="/#about">About</a>
+          <a href="/#open-source">Downloads</a>
         </nav>
         <nav class="footer-col" aria-label="Community">
           <h2>Community</h2>

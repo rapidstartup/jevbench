@@ -92,12 +92,7 @@ const ROWS = [
   },
 ];
 
-const tbody = document.getElementById("lb-body");
-const filterUsecase = document.getElementById("filter-usecase");
-const filterModel = document.getElementById("filter-model");
-const filterCategory = document.getElementById("filter-category");
-const resultCount = document.getElementById("result-count");
-const tableWrap = document.querySelector(".table-wrap");
+const tbody = document.getElementById("lb-body-summary");
 const useCasesRoot = document.getElementById("use-cases-root");
 
 function escapeHtml(str) {
@@ -135,33 +130,23 @@ function enrichRow(r) {
   };
 }
 
-function populateUsecaseFilter() {
-  if (!filterUsecase) return;
-  const all = filterUsecase.querySelector('option[value="all"]');
-  filterUsecase.innerHTML = "";
-  const allOpt = document.createElement("option");
-  allOpt.value = "all";
-  allOpt.textContent = "All use cases";
-  filterUsecase.appendChild(allOpt);
-  if (all && all.selected) allOpt.selected = true;
+function renderHomepageSummary() {
+  if (!tbody) return;
+  
+  const enriched = ROWS.slice(0, 5).map(enrichRow);
 
-  const groups = [
-    { key: "games", label: "Games first (P0)" },
-    { key: "platform", label: "Platform patterns (P1)" },
-    { key: "product", label: "Product patterns (P1)" },
-    { key: "nongame", label: "Non-game later (P2)" },
-  ];
-  for (const g of groups) {
-    const og = document.createElement("optgroup");
-    og.label = g.label;
-    USE_CASES.filter((u) => u.tranche === g.key).forEach((u) => {
-      const opt = document.createElement("option");
-      opt.value = u.id;
-      opt.textContent = `#${u.num} ${shortLabel(u)}`;
-      og.appendChild(opt);
-    });
-    filterUsecase.appendChild(og);
-  }
+  tbody.innerHTML = enriched
+    .map(
+      (r) => `
+    <tr data-usecase="${r.usecase}" data-model="${r.family}" data-category="${r.category}" data-source="${escapeHtml(r.source)}">
+      <td class="rank">${String(r.rank).padStart(2, "0")}</td>
+      <td class="model"><span class="model-name">${escapeHtml(r.model)}</span> ${sourceBadge(r.source)}</td>
+      <td data-label="Use case"><a class="uc-row-link" href="#${escapeHtml(r.usecase)}">${escapeHtml(r.usecaseLabel)}</a></td>
+      <td data-label="Category">${categoryBadge(r.category)}</td>
+      <td class="score" data-label="Score"><span class="score-label">${escapeHtml(r.scoreLabel)}</span></td>
+    </tr>`
+    )
+    .join("");
 }
 
 function renderUseCasesSection() {
@@ -206,62 +191,17 @@ function renderUseCasesSection() {
     .join("");
 }
 
-function updateCount(shown) {
-  if (!resultCount) return;
-  const total = ROWS.length;
-  resultCount.textContent = `Showing ${shown} of ${total} rows`;
-}
-
-function renderRows() {
-  const uc = filterUsecase.value;
-  const model = filterModel.value;
-  const cat = filterCategory.value;
-
-  const enriched = ROWS.map(enrichRow);
-  const filtered = enriched.filter((r) => {
-    if (uc !== "all" && r.usecase !== uc) return false;
-    if (model !== "all" && r.family !== model) return false;
-    if (cat !== "all" && r.category !== cat) return false;
-    return true;
-  });
-
-  updateCount(filtered.length);
-
-  if (!filtered.length) {
-    tbody.innerHTML = `<tr class="lb-empty"><td colspan="6" class="muted">No rows match these filters.</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = filtered
-    .map(
-      (r) => `
-    <tr data-usecase="${r.usecase}" data-model="${r.family}" data-category="${r.category}" data-source="${escapeHtml(r.source)}">
-      <td class="rank">${String(r.rank).padStart(2, "0")}</td>
-      <td class="model"><span class="model-name">${escapeHtml(r.model)}</span> ${sourceBadge(r.source)}</td>
-      <td data-label="Use case"><a class="uc-row-link" href="#${escapeHtml(r.usecase)}">${escapeHtml(r.usecaseLabel)}</a></td>
-      <td data-label="Category">${categoryBadge(r.category)}</td>
-      <td class="score" data-label="Score"><span class="score-label">${escapeHtml(r.scoreLabel)}</span></td>
-      <td class="muted notes" data-label="Notes">${escapeHtml(r.notes)}</td>
-    </tr>`
-    )
-    .join("");
-}
-
-populateUsecaseFilter();
+renderHomepageSummary();
 renderUseCasesSection();
 
-[filterUsecase, filterModel, filterCategory].forEach((el) => {
-  el.addEventListener("change", renderRows);
-});
-
-if (tableWrap) {
+document.querySelectorAll(".table-wrap").forEach((tableWrap) => {
   tableWrap.addEventListener("keydown", (e) => {
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     if (tableWrap.scrollWidth <= tableWrap.clientWidth) return;
     e.preventDefault();
     tableWrap.scrollLeft += e.key === "ArrowRight" ? 48 : -48;
   });
-}
+});
 
 document.querySelectorAll("[data-copy]").forEach((btn) => {
   const original = btn.textContent;
@@ -290,5 +230,4 @@ document.getElementById("contact-form")?.addEventListener("submit", (e) => {
   e.preventDefault();
 });
 
-renderRows();
 initJevSuit();
