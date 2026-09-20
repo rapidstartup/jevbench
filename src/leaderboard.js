@@ -23,6 +23,10 @@ const ROWS = [
     notes: "SC2 harness control · 825 Jev calls · ~$0.22 OpenRouter · MarineMicro unwinnable as Terran; pivoting to campaign",
     scoreLabel: "38 runs · 0 wins",
     source: "ours",
+    speedLabel: "70–500 ms",
+    costIn: "$0.042/MTok",
+    costOut: "FREE",
+    costSource: "TypeSafe blog",
   },
   {
     rank: 2,
@@ -32,6 +36,10 @@ const ROWS = [
     notes: "Bun :8080 · OpenRouter gpt-4o-mini upstream",
     scoreLabel: "smoke OK",
     source: "ours",
+    speedLabel: "local / depends",
+    costIn: "FREE",
+    costOut: "FREE",
+    costSource: "self-host; upstream LLM billed separately if not local",
   },
   {
     rank: 3,
@@ -41,6 +49,10 @@ const ROWS = [
     notes: "PyPI · box CPU · predict ~0.14s after load",
     scoreLabel: "smoke OK",
     source: "ours",
+    speedLabel: "~0.14s (measured)",
+    costIn: "FREE",
+    costOut: "FREE",
+    costSource: "open/local",
   },
   {
     rank: 4,
@@ -50,6 +62,10 @@ const ROWS = [
     notes: "openjev.com MiniCPM WebGPU · MSI Chrome OK · box blocked (no GPU)",
     scoreLabel: "smoke OK (MSI)",
     source: "ours",
+    speedLabel: "depends on GPU",
+    costIn: "FREE",
+    costOut: "FREE",
+    costSource: "WebGPU local",
   },
   {
     rank: 5,
@@ -59,6 +75,10 @@ const ROWS = [
     notes: "HTTP smoke on box",
     scoreLabel: "smoke OK",
     source: "ours",
+    speedLabel: "—",
+    costIn: "FREE",
+    costOut: "FREE",
+    costSource: "local HTTP",
   },
   {
     rank: 6,
@@ -68,6 +88,10 @@ const ROWS = [
     notes: "Official: mizorewww/laya-mlx BENCHMARKS · M3 Max FP16 · EN 13.42 ms / ML 7.39 ms P50 · not run here (Mac-only)",
     scoreLabel: "13.4 ms EN p50",
     source: "official",
+    speedLabel: "13.4 ms p50 (EN)",
+    costIn: "FREE",
+    costOut: "FREE",
+    costSource: "BENCHMARKS.md (M3 Max FP16)",
   },
   {
     rank: 7,
@@ -77,6 +101,10 @@ const ROWS = [
     notes: "Dual-brain dry-run · Gemini 2.5 Flash + Jev Goler · 3/3 sensible · pending live traynor01 with guide",
     scoreLabel: "3/3 dry-run OK",
     source: "ours",
+    speedLabel: "—",
+    costIn: "$0.30/MTok",
+    costOut: "$2.50/MTok",
+    costSource: "Google AI pricing; free tier also available",
   },
   {
     rank: 8,
@@ -86,6 +114,10 @@ const ROWS = [
     notes: "Cloned only · smoke not run yet",
     scoreLabel: "pending smoke",
     source: "ours",
+    speedLabel: "—",
+    costIn: "FREE",
+    costOut: "FREE",
+    costSource: "HF open weights / self-host GPU",
   },
 ];
 
@@ -230,7 +262,7 @@ function renderJevModels() {
   updateJevCount(filtered.length);
 
   if (!filtered.length) {
-    tbodyJev.innerHTML = `<tr class="lb-empty"><td colspan="6" class="muted">No rows match these filters.</td></tr>`;
+    tbodyJev.innerHTML = `<tr class="lb-empty"><td colspan="9" class="muted">No rows match these filters.</td></tr>`;
     return;
   }
 
@@ -243,6 +275,9 @@ function renderJevModels() {
       <td data-label="Use case"><a class="uc-row-link" href="/#${escapeHtml(r.usecase)}">${escapeHtml(r.usecaseLabel)}</a></td>
       <td data-label="Category">${categoryBadge(r.category)}</td>
       <td class="score" data-label="Score"><span class="score-label">${escapeHtml(r.scoreLabel)}</span></td>
+      <td class="speed" data-label="Speed">${escapeHtml(r.speedLabel || "—")}</td>
+      <td class="cost" data-label="Cost in">${escapeHtml(r.costIn || "—")}</td>
+      <td class="cost" data-label="Cost out">${escapeHtml(r.costOut || "—")}</td>
       <td class="muted notes" data-label="Notes">${escapeHtml(r.notes)}</td>
     </tr>`
     )
