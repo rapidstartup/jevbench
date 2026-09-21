@@ -186,17 +186,21 @@ a:hover {
   text-decoration: none;
 }
 .logo-mark {
-  display: grid;
-  place-items: center;
+  position: relative;
+  display: block;
   width: 2rem;
   height: 2rem;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), #22d3ee);
-  color: #04120c;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
   flex-shrink: 0;
+}
+.logo-mark img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+.logo-still {
+  display: none;
 }
 .logo-text {
   letter-spacing: var(--tracking-tight);
@@ -1087,6 +1091,12 @@ h3 {
   }
   html {
     scroll-behavior: auto;
+  }
+  .logo-anim {
+    display: none;
+  }
+  .logo-still {
+    display: block;
   }
 }
 
