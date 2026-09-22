@@ -1822,7 +1822,7 @@ export const SC2_RUNS = [
 ];
 
 export const BENCH = {
-  updatedLabel: "21 Sep 2026",
+  updatedLabel: "22 Sep 2026",
   scoredRuns: 78,
   verifiedWins: 14,
   games: 1,
