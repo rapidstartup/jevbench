@@ -9,6 +9,7 @@ import "@fontsource/ibm-plex-mono/latin-500.css";
 import "@fontsource/ibm-plex-mono/latin-600.css";
 
 import "./nav.js";
+import { initRunDrawer } from "./run-drawer.js";
 import { USE_CASES, shortLabel } from "./use-cases.js";
 
 const byId = Object.fromEntries(USE_CASES.map((u) => [u.id, u]));
@@ -20,8 +21,10 @@ const ROWS = [
     model: "TypeSafe Jev 1.13",
     family: "jev",
     usecase: "uc-20",
-    notes: "SC2 harness control · 825 Jev calls · ~$0.22 OpenRouter · MarineMicro unwinnable as Terran; pivoting to campaign",
-    scoreLabel: "38 runs · 0 wins",
+    notes: "6 verified Liberation Day wins: 5 on the TypeSafe wire, 1 via OpenRouter. HQ destroyed or critically damaged, Raynor alive. 2 other TypeSafe attempts incomplete.",
+    scoreLabel: "6 wins · 8 runs",
+    runs: "model:typesafe/jev-1.13",
+    runsTitle: "TypeSafe Jev 1.13",
     source: "ours",
     speedLabel: "70–500 ms",
     costIn: "$0.042/MTok",
@@ -33,8 +36,10 @@ const ROWS = [
     model: "LocalJev",
     family: "jev",
     usecase: "uc-20",
-    notes: "Bun :8080 · OpenRouter gpt-4o-mini upstream",
-    scoreLabel: "smoke OK",
+    notes: "OpenJev wire, model openjev-latest. 9 Liberation Day attempts, all incomplete (stalls or decision failures). No verified win.",
+    scoreLabel: "0 wins · 9 runs",
+    runs: "openjev",
+    runsTitle: "OpenJev wire",
     source: "ours",
     speedLabel: "local / depends",
     costIn: "FREE",
@@ -121,16 +126,47 @@ const ROWS = [
   },
 ];
 
-/** Gaming results — SC2 only for now; honest 0 wins. */
+/** Gaming results from scored result.json packets on the harness machine, 21 Sep 2026. */
 const GAMING_ROWS = [
   {
     rank: 1,
     game: "StarCraft II",
     model: "TypeSafe Jev 1.13",
     provider: "typesafe",
+    wins: 5,
+    runs: 7,
+    notes: "Liberation Day. 5 verified wins, 2 incomplete.",
+    runsFilter: "typesafe",
+  },
+  {
+    rank: 2,
+    game: "StarCraft II",
+    model: "TypeSafe Jev 1.13",
+    provider: "openrouter",
+    wins: 1,
+    runs: 1,
+    notes: "Liberation Day via OpenRouter. 187 calls, $0.0604 recorded.",
+    runsFilter: "openrouter",
+  },
+  {
+    rank: 3,
+    game: "StarCraft II",
+    model: "OpenJev wire",
+    provider: "openjev",
     wins: 0,
-    runs: 38,
-    notes: "MarineMicro unwinnable as Terran · 825 Jev calls · ~$0.22 OpenRouter · pivoting to campaign",
+    runs: 9,
+    notes: "Local SystemOne attempts. No verified win.",
+    runsFilter: "openjev",
+  },
+  {
+    rank: 4,
+    game: "StarCraft II",
+    model: "Untagged early harness",
+    provider: "untagged",
+    wins: 0,
+    runs: 51,
+    notes: "37 early maps plus 14 Liberation Day attempts with no backend tag. No verified win.",
+    runsFilter: "untagged",
   },
 ];
 
@@ -242,6 +278,14 @@ function populateJevUsecaseFilter() {
   }
 }
 
+function useCaseCell(row, prefix) {
+  const catalog = `<a class="uc-catalog" href="${prefix}#${escapeHtml(row.usecase)}">Catalog</a>`;
+  if (!row.runs) {
+    return `<a class="uc-row-link" href="${prefix}#${escapeHtml(row.usecase)}">${escapeHtml(row.usecaseLabel)}</a>`;
+  }
+  return `<button type="button" class="run-open" data-runs="${escapeHtml(row.runs)}" data-title="${escapeHtml(row.runsTitle || row.model)}">View runs</button>${catalog}`;
+}
+
 function updateJevCount(shown) {
   if (!resultCountJev) return;
   const total = ROWS.length;
@@ -272,7 +316,7 @@ function renderJevModels() {
     <tr data-usecase="${r.usecase}" data-model="${r.family}" data-category="${r.category}" data-source="${escapeHtml(r.source)}">
       <td class="rank">${String(r.rank).padStart(2, "0")}</td>
       <td class="model"><span class="model-name">${escapeHtml(r.model)}</span> ${sourceBadge(r.source)}</td>
-      <td data-label="Use case"><a class="uc-row-link" href="/#${escapeHtml(r.usecase)}">${escapeHtml(r.usecaseLabel)}</a></td>
+      <td data-label="Use case">${useCaseCell(r, "/")}</td>
       <td data-label="Category">${categoryBadge(r.category)}</td>
       <td class="score" data-label="Score"><span class="score-label">${escapeHtml(r.scoreLabel)}</span></td>
       <td class="speed" data-label="Speed">${escapeHtml(r.speedLabel || "—")}</td>
@@ -317,13 +361,14 @@ function renderGaming() {
       <td data-label="Provider">${escapeHtml(r.provider)}</td>
       <td class="score" data-label="Wins"><span class="score-label">${r.wins}</span></td>
       <td class="score" data-label="Runs"><span class="score-label">${r.runs}</span></td>
-      <td class="muted notes" data-label="Notes">${escapeHtml(r.notes)}</td>
+      <td class="muted notes" data-label="Notes">${escapeHtml(r.notes)} <button type="button" class="run-open" data-runs="${escapeHtml(r.runsFilter)}" data-title="${escapeHtml(r.model)}">View runs</button></td>
     </tr>`
     )
     .join("");
 }
 
 // Initialize
+initRunDrawer();
 populateJevUsecaseFilter();
 renderJevModels();
 renderGaming();

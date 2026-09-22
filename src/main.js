@@ -11,6 +11,7 @@ import "@fontsource/ibm-plex-mono/latin-600.css";
 
 import "./nav.js";
 import "./support.js";
+import { initRunDrawer } from "./run-drawer.js";
 import { USE_CASES, TRANCHE_META, shortLabel } from "./use-cases.js";
 import { initJevSuit } from "./jev-suit.js";
 
@@ -23,8 +24,10 @@ const ROWS = [
     model: "TypeSafe Jev 1.13",
     family: "jev",
     usecase: "uc-20",
-    notes: "SC2 harness control · 825 Jev calls · ~$0.22 OpenRouter · MarineMicro unwinnable as Terran; pivoting to campaign",
-    scoreLabel: "38 runs · 0 wins",
+    notes: "6 verified Liberation Day wins: 5 on the TypeSafe wire, 1 via OpenRouter. HQ destroyed or critically damaged, Raynor alive.",
+    scoreLabel: "6 wins · 8 runs",
+    runs: "model:typesafe/jev-1.13",
+    runsTitle: "TypeSafe Jev 1.13",
     source: "ours",
     speedLabel: "70–500 ms",
     costIn: "$0.042/MTok",
@@ -36,8 +39,10 @@ const ROWS = [
     model: "LocalJev",
     family: "jev",
     usecase: "uc-20",
-    notes: "Bun :8080 · OpenRouter gpt-4o-mini upstream",
-    scoreLabel: "smoke OK",
+    notes: "OpenJev wire, model openjev-latest. 9 Liberation Day attempts, all incomplete. No verified win.",
+    scoreLabel: "0 wins · 9 runs",
+    runs: "openjev",
+    runsTitle: "OpenJev wire",
     source: "ours",
     speedLabel: "local / depends",
     costIn: "FREE",
@@ -173,7 +178,7 @@ function renderHomepageSummary() {
     <tr data-usecase="${r.usecase}" data-model="${r.family}" data-category="${r.category}" data-source="${escapeHtml(r.source)}">
       <td class="rank">${String(r.rank).padStart(2, "0")}</td>
       <td class="model"><span class="model-name">${escapeHtml(r.model)}</span> ${sourceBadge(r.source)}</td>
-      <td data-label="Use case"><a class="uc-row-link" href="#${escapeHtml(r.usecase)}">${escapeHtml(r.usecaseLabel)}</a></td>
+      <td data-label="Use case">${r.runs ? `<button type="button" class="run-open" data-runs="${escapeHtml(r.runs)}" data-title="${escapeHtml(r.runsTitle || r.model)}">View runs</button><a class="uc-catalog" href="#${escapeHtml(r.usecase)}">Catalog</a>` : `<a class="uc-row-link" href="#${escapeHtml(r.usecase)}">${escapeHtml(r.usecaseLabel)}</a>`}</td>
       <td data-label="Category">${categoryBadge(r.category)}</td>
       <td class="score" data-label="Score"><span class="score-label">${escapeHtml(r.scoreLabel)}</span></td>
       <td class="cost" data-label="Cost in">${escapeHtml(r.costIn || "—")}</td>
@@ -264,3 +269,4 @@ document.getElementById("contact-form")?.addEventListener("submit", (e) => {
 });
 
 initJevSuit();
+initRunDrawer();

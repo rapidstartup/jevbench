@@ -87,13 +87,13 @@
                 <p class="lb-stat-value" id="stat-models">8</p>
               </div>
             </div>
-            <div class="lb-stat-card">
+            <button type="button" class="lb-stat-card run-open" data-runs="all" data-title="All scored harness runs">
               <div class="lb-stat-icon">🎮</div>
               <div class="lb-stat-content">
                 <p class="lb-stat-label">Harness runs</p>
-                <p class="lb-stat-value" id="stat-runs">38</p>
+                <p class="lb-stat-value" id="stat-runs">68</p>
               </div>
-            </div>
+            </button>
             <div class="lb-stat-card">
               <div class="lb-stat-icon">🏆</div>
               <div class="lb-stat-content">
@@ -102,14 +102,14 @@
                 <p class="lb-stat-note">StarCraft II</p>
               </div>
             </div>
-            <div class="lb-stat-card">
+            <button type="button" class="lb-stat-card run-open" data-runs="wins" data-title="Verified wins">
               <div class="lb-stat-icon">⚡</div>
               <div class="lb-stat-content">
                 <p class="lb-stat-label">Wins verified</p>
-                <p class="lb-stat-value lb-stat-value-warn" id="stat-wins">0</p>
-                <p class="lb-stat-note">Honest results</p>
+                <p class="lb-stat-value" id="stat-wins">6</p>
+                <p class="lb-stat-note">Liberation Day</p>
               </div>
-            </div>
+            </button>
           </div>
 
           <div class="lb-tabs" role="tablist" aria-label="Leaderboard views">
@@ -216,7 +216,7 @@
                   <span>Game</span>
                   <select id="filter-gaming-game" aria-label="Filter by game">
                     <option value="all">All games</option>
-                    <option value="sc2">StarCraft II</option>
+                    <option value="StarCraft II">StarCraft II</option>
                   </select>
                 </label>
                 <label class="filter">
@@ -225,7 +225,8 @@
                     <option value="all">All providers</option>
                     <option value="typesafe">TypeSafe</option>
                     <option value="openrouter">OpenRouter</option>
-                    <option value="local">Local</option>
+                    <option value="openjev">OpenJev</option>
+                    <option value="untagged">Untagged</option>
                   </select>
                 </label>
               </div>
@@ -235,7 +236,7 @@
               <div class="table-wrap" tabindex="0" role="region" aria-label="Gaming results">
                 <table class="lb-table" id="lb-table-gaming">
                   <caption class="table-caption">
-                    StarCraft II harness v0.1 · 38 runs · 0 wins yet · honest incomplete results
+                    StarCraft II · 68 scored runs · 6 verified Liberation Day wins · updated 21 Sep 2026
                   </caption>
                   <thead>
                     <tr>
@@ -253,12 +254,12 @@
                 </table>
               </div>
               <p class="table-foot muted">
-                Early harness results — no wins yet on MarineMicro unwinnable-as-Terran scenario. Campaign pivots incoming.
+                Wins count only when the harness marked victory: HQ destroyed or critically damaged and Raynor alive, or a human-confirmed score screen. Open the run list for calls, cost, and the check that credited the win. Screen grabs are not in these packets.
               </p>
             </div>
           </div>
 
-          <p class="bench-status">Harness v0.1 · 38 SC2 runs · 1 game (StarCraft II) · updated 20 Sep 2026</p>
+          <p class="bench-status">Harness v0.1 · 68 scored SC2 runs · 6 verified Liberation Day wins · 1 game (StarCraft II) · updated 21 Sep 2026</p>
         </div>
       </section>
     </main>
