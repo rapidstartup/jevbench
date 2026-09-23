@@ -126,7 +126,7 @@ const ROWS = [
   },
 ];
 
-/** Gaming results from scored result.json packets on the harness machine, 21 Sep 2026. */
+/** Gaming results from scored result.json packets on the harness machines, 23 Sep 2026. */
 const GAMING_ROWS = [
   {
     rank: 1,
@@ -137,6 +137,7 @@ const GAMING_ROWS = [
     runs: 12,
     notes: "Liberation Day. 9 verified wins, 3 incomplete.",
     runsFilter: "typesafe",
+    drawerGame: "sc2",
   },
   {
     rank: 2,
@@ -147,6 +148,7 @@ const GAMING_ROWS = [
     runs: 6,
     notes: "Liberation Day via OpenRouter. 5 verified wins, 1 incomplete.",
     runsFilter: "openrouter",
+    drawerGame: "sc2",
   },
   {
     rank: 3,
@@ -157,6 +159,7 @@ const GAMING_ROWS = [
     runs: 9,
     notes: "Local SystemOne attempts. No verified win.",
     runsFilter: "openjev",
+    drawerGame: "sc2",
   },
   {
     rank: 4,
@@ -167,6 +170,18 @@ const GAMING_ROWS = [
     runs: 51,
     notes: "37 early maps plus 14 Liberation Day attempts with no backend tag. No verified win.",
     runsFilter: "untagged",
+    drawerGame: "sc2",
+  },
+  {
+    rank: 5,
+    game: "Minecraft",
+    model: "Astra (gpt-6) + Jev 1.13",
+    provider: "typesafe",
+    wins: 1,
+    runs: 17,
+    notes: "Java 1.16.5 Ender Dragon. 1 verified full clear (NEW_RUN20, 327 steps, bed-blast kill). 16 earlier attempts failed on pathing/stuck/death — all published.",
+    runsFilter: "all",
+    drawerGame: "mc",
   },
 ];
 
@@ -361,7 +376,7 @@ function renderGaming() {
       <td data-label="Provider">${escapeHtml(r.provider)}</td>
       <td class="score" data-label="Wins"><span class="score-label">${r.wins}</span></td>
       <td class="score" data-label="Runs"><span class="score-label">${r.runs}</span></td>
-      <td class="muted notes" data-label="Notes">${escapeHtml(r.notes)} <button type="button" class="run-open" data-runs="${escapeHtml(r.runsFilter)}" data-title="${escapeHtml(r.model)}">View runs</button></td>
+      <td class="muted notes" data-label="Notes">${escapeHtml(r.notes)} <button type="button" class="run-open" data-runs="${escapeHtml(r.runsFilter)}" data-title="${escapeHtml(r.model)}" data-game="${escapeHtml(r.drawerGame || "sc2")}">View runs</button></td>
     </tr>`
     )
     .join("");

@@ -1,4 +1,5 @@
 import { SC2_RUNS } from "./sc2-runs.js";
+import { MC_RUNS } from "./minecraft-runs.js";
 
 const VIA_LABEL = {
   typesafe: "TypeSafe",
@@ -7,7 +8,7 @@ const VIA_LABEL = {
   untagged: "Untagged",
 };
 
-const CHIPS = [
+const SC2_CHIPS = [
   { id: "all", label: "All scored" },
   { id: "wins", label: "Verified wins" },
   { id: "typesafe", label: "TypeSafe" },
@@ -16,6 +17,29 @@ const CHIPS = [
   { id: "untagged", label: "Untagged" },
 ];
 
+const MC_CHIPS = [
+  { id: "all", label: "All runs" },
+  { id: "wins", label: "Verified wins" },
+  { id: "fails", label: "Failures" },
+];
+
+const GAMES = {
+  sc2: {
+    key: "sc2",
+    label: "StarCraft II",
+    runs: SC2_RUNS,
+    chips: SC2_CHIPS,
+    noun: "packets",
+  },
+  mc: {
+    key: "mc",
+    label: "Minecraft",
+    runs: MC_RUNS,
+    chips: MC_CHIPS,
+    noun: "runs",
+  },
+};
+
 let drawer;
 let scrim;
 let titleEl;
@@ -23,6 +47,7 @@ let countEl;
 let listEl;
 let lastFocus = null;
 let activeFilter = "all";
+let activeGame = "sc2";
 let activeTitle = "Scored harness runs";
 
 function escapeHtml(str) {
@@ -46,23 +71,100 @@ function money(value) {
 }
 
 export function filterRuns(key) {
-  if (!key || key === "all") return SC2_RUNS;
-  if (key === "wins") return SC2_RUNS.filter((run) => run.status === "victory");
+  const runs = GAMES[activeGame].runs;
+  if (!key || key === "all") return runs;
+  if (key === "wins") return runs.filter((run) => run.status === "victory");
+  if (key === "fails") return runs.filter((run) => run.status !== "victory");
   if (key.startsWith("model:")) {
     const model = key.slice("model:".length);
-    return SC2_RUNS.filter((run) => run.model === model);
+    return runs.filter((run) => run.model === model);
   }
-  return SC2_RUNS.filter((run) => run.via === key);
+  return runs.filter((run) => run.via === key);
 }
 
 function chipLabel(id) {
   if (id.startsWith("model:")) return id.slice("model:".length);
-  return CHIPS.find((chip) => chip.id === id)?.label || id;
+  return (
+    GAMES[activeGame].chips.find((chip) => chip.id === id)?.label || id
+  );
+}
+
+function renderSc2Card(run) {
+  const win = run.status === "victory";
+  const facts = [
+    ["Wire", `${VIA_LABEL[run.via] || run.via}${run.model ? ` · ${run.model}` : ""}`],
+    ["Calls", run.calls == null ? "—" : String(run.calls)],
+    ["Recorded cost", money(run.cost)],
+    ["Check", run.source || "—"],
+    ["Raynor alive", run.heroAlive == null ? "—" : run.heroAlive ? "Yes" : "No"],
+    ["HQ", run.hq || (run.hqMin != null ? `min health ${run.hqMin}` : "—")],
+    ["Score", run.peakScore == null ? "—" : String(run.peakScore)],
+    ["Loop", run.loop == null ? "—" : String(run.loop)],
+    ["Guide", run.guide || "—"],
+  ];
+  return `
+    <article class="run-card">
+      <header class="run-card-head">
+        <span class="badge ${win ? "badge-ours" : "badge-nongame"}">${win ? "Victory" : "Incomplete"}</span>
+        <time datetime="${escapeHtml(stampLabel(run.id))}">${escapeHtml(stampLabel(run.id))}</time>
+      </header>
+      <h3>${escapeHtml(run.map)}</h3>
+      ${run.objective ? `<p class="run-objective">${escapeHtml(run.objective)}</p>` : ""}
+      <dl class="run-facts">
+        ${facts
+          .map(
+            ([label, value]) =>
+              `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`
+          )
+          .join("")}
+      </dl>
+      ${run.reason ? `<p class="run-reason">${escapeHtml(run.reason)}</p>` : ""}
+      ${mediaBlock(run)}
+    </article>`;
+}
+
+function renderMcCard(run) {
+  const win = run.status === "victory";
+  const badge = win ? "Victory" : run.status === "incomplete" ? "Incomplete" : "Failed";
+  const facts = [
+    ["Game", run.game],
+    ["Steps", run.steps == null ? "—" : String(run.steps)],
+    ["Planner", run.planner || "—"],
+    ["Controller", run.controller || "—"],
+    ["Ender Dragon", run.dragonKilled ? "Killed" : "—"],
+    ["Difficulty", run.difficulty || "—"],
+  ];
+  return `
+    <article class="run-card">
+      <header class="run-card-head">
+        <span class="badge ${win ? "badge-ours" : "badge-nongame"}">${badge}</span>
+        <span class="run-id">${escapeHtml(run.id)}</span>
+      </header>
+      <h3>Ender Dragon speedrun</h3>
+      <dl class="run-facts">
+        ${facts
+          .map(
+            ([label, value]) =>
+              `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`
+          )
+          .join("")}
+      </dl>
+      ${run.note ? `<p class="run-reason">${escapeHtml(run.note)}</p>` : ""}
+      ${mediaBlock(run)}
+    </article>`;
+}
+
+function mediaBlock(run) {
+  if (!run.media || (!run.media.video && !(run.media.stills || []).length)) return "";
+  return `<div class="run-media">
+    ${run.media.video ? `<video controls preload="none" src="${escapeHtml(run.media.video)}"></video>` : ""}
+    ${(run.media.stills || []).map((s) => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener"><img loading="lazy" src="${escapeHtml(s.url)}" alt="${escapeHtml(s.file)}"></a>`).join("")}
+  </div>`;
 }
 
 function renderList() {
   const runs = filterRuns(activeFilter);
-  countEl.textContent = `${runs.length} scored ${runs.length === 1 ? "run" : "runs"} · ${chipLabel(activeFilter)}`;
+  countEl.textContent = `${runs.length} scored ${GAMES[activeGame].noun} · ${chipLabel(activeFilter)}`;
   drawer.querySelectorAll(".run-chip").forEach((chip) => {
     chip.setAttribute("aria-pressed", chip.dataset.filter === activeFilter ? "true" : "false");
   });
@@ -70,44 +172,8 @@ function renderList() {
     listEl.innerHTML = `<p class="muted">No scored packets in this view.</p>`;
     return;
   }
-  listEl.innerHTML = runs
-    .map((run) => {
-      const win = run.status === "victory";
-      const facts = [
-        ["Wire", `${VIA_LABEL[run.via] || run.via}${run.model ? ` · ${run.model}` : ""}`],
-        ["Calls", run.calls == null ? "—" : String(run.calls)],
-        ["Recorded cost", money(run.cost)],
-        ["Check", run.source || "—"],
-        ["Raynor alive", run.heroAlive == null ? "—" : run.heroAlive ? "Yes" : "No"],
-        ["HQ", run.hq || (run.hqMin != null ? `min health ${run.hqMin}` : "—")],
-        ["Score", run.peakScore == null ? "—" : String(run.peakScore)],
-        ["Loop", run.loop == null ? "—" : String(run.loop)],
-        ["Guide", run.guide || "—"],
-      ];
-      return `
-        <article class="run-card">
-          <header class="run-card-head">
-            <span class="badge ${win ? "badge-ours" : "badge-nongame"}">${win ? "Victory" : "Incomplete"}</span>
-            <time datetime="${escapeHtml(stampLabel(run.id))}">${escapeHtml(stampLabel(run.id))}</time>
-          </header>
-          <h3>${escapeHtml(run.map)}</h3>
-          ${run.objective ? `<p class="run-objective">${escapeHtml(run.objective)}</p>` : ""}
-          <dl class="run-facts">
-            ${facts
-              .map(
-                ([label, value]) =>
-                  `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`
-              )
-              .join("")}
-          </dl>
-          ${run.reason ? `<p class="run-reason">${escapeHtml(run.reason)}</p>` : ""}
-          ${run.media && (run.media.video || (run.media.stills || []).length) ? `<div class="run-media">
-            ${run.media.video ? `<video controls preload="none" src="${escapeHtml(run.media.video)}"></video>` : ""}
-            ${(run.media.stills || []).map((s) => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener"><img loading="lazy" src="${escapeHtml(s.url)}" alt="${escapeHtml(s.file)}"></a>`).join("")}
-          </div>` : ""}
-        </article>`;
-    })
-    .join("");
+  const render = activeGame === "mc" ? renderMcCard : renderSc2Card;
+  listEl.innerHTML = runs.map(render).join("");
 }
 
 function focusables() {
@@ -118,10 +184,25 @@ function isOpen() {
   return drawer.hasAttribute("data-open");
 }
 
-export function openRunDrawer({ filter = "all", title = "Scored harness runs" } = {}) {
+function renderChips() {
+  const chipsEl = drawer.querySelector(".run-chips");
+  chipsEl.innerHTML = GAMES[activeGame].chips
+    .map(
+      (chip) =>
+        `<button type="button" class="run-chip" data-filter="${chip.id}" aria-pressed="${chip.id === activeFilter ? "true" : "false"}">${chip.label}</button>`
+    )
+    .join("");
+  drawer.querySelectorAll(".run-game").forEach((btn) => {
+    btn.setAttribute("aria-pressed", btn.dataset.game === activeGame ? "true" : "false");
+  });
+}
+
+export function openRunDrawer({ filter = "all", title = "Scored harness runs", game } = {}) {
+  if (game && GAMES[game]) activeGame = game;
   activeFilter = filter;
   activeTitle = title;
   titleEl.textContent = title;
+  renderChips();
   renderList();
   lastFocus = document.activeElement;
   scrim.hidden = false;
@@ -171,17 +252,20 @@ function ensureDrawer() {
       </div>
       <button type="button" class="run-drawer-close">Close</button>
     </div>
+    <div class="run-games" role="group" aria-label="Game">
+      ${Object.values(GAMES)
+        .map(
+          (g) =>
+            `<button type="button" class="run-game" data-game="${g.key}">${g.label}</button>`
+        )
+        .join("")}
+    </div>
     <div class="run-chips" role="group" aria-label="Filter runs"></div>
     <p class="run-media-note">
-      Runs with game video and stills show them on the card. Older packets carry replay and logs on the harness machine.
+      Runs with game video and stills show them on the card. StarCraft packets also carry replay and logs on the harness machine.
     </p>
     <div class="run-list"></div>
   `;
-  const chips = drawer.querySelector(".run-chips");
-  chips.innerHTML = CHIPS.map(
-    (chip) =>
-      `<button type="button" class="run-chip" data-filter="${chip.id}" aria-pressed="false">${chip.label}</button>`
-  ).join("");
   titleEl = drawer.querySelector("#run-drawer-title");
   countEl = drawer.querySelector(".run-drawer-count");
   listEl = drawer.querySelector(".run-list");
@@ -189,12 +273,23 @@ function ensureDrawer() {
 
   scrim.addEventListener("click", () => closeRunDrawer());
   drawer.querySelector(".run-drawer-close").addEventListener("click", () => closeRunDrawer());
-  chips.addEventListener("click", (event) => {
+  drawer.querySelector(".run-games").addEventListener("click", (event) => {
+    const btn = event.target.closest(".run-game");
+    if (!btn) return;
+    activeGame = btn.dataset.game;
+    activeFilter = "all";
+    activeTitle = "All scored harness runs";
+    titleEl.textContent = activeTitle;
+    renderChips();
+    renderList();
+  });
+  drawer.querySelector(".run-chips").addEventListener("click", (event) => {
     const chip = event.target.closest(".run-chip");
     if (!chip) return;
     activeFilter = chip.dataset.filter;
     if (activeFilter === "all") activeTitle = "All scored harness runs";
     else if (activeFilter === "wins") activeTitle = "Verified wins";
+    else if (activeFilter === "fails") activeTitle = "Failures";
     else activeTitle = chipLabel(activeFilter);
     titleEl.textContent = activeTitle;
     renderList();
@@ -226,6 +321,7 @@ function ensureDrawer() {
     openRunDrawer({
       filter: trigger.dataset.runs || "all",
       title: trigger.dataset.title || "Scored harness runs",
+      game: trigger.dataset.game,
     });
   });
 }
