@@ -84,6 +84,7 @@ def main() -> None:
                 "id": result_path.parent.name,
                 "map": data.get("map_name") or "Unknown map",
                 "status": data.get("status") or "incomplete",
+                "stateMode": control.get("state_mode") or "full",
                 "via": via,
                 "model": control.get("jev_model") or verification.get("jev_model"),
                 "calls": data.get("calls"),
