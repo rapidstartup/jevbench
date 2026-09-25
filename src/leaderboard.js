@@ -10,6 +10,7 @@ import "@fontsource/ibm-plex-mono/latin-600.css";
 
 import "./nav.js";
 import { initRunDrawer } from "./run-drawer.js";
+import { SC2_RUNS } from "./sc2-runs.js";
 import { USE_CASES, shortLabel } from "./use-cases.js";
 
 const byId = Object.fromEntries(USE_CASES.map((u) => [u.id, u]));
@@ -140,63 +141,123 @@ const ROWS = [
   },
 ];
 
-/** Gaming results from scored result.json packets on the harness machines, 23 Sep 2026. */
-const GAMING_ROWS = [
+/** Gaming results from scored result.json packets on the harness machines.
+ *  Two bench versions:
+ *    v1 = the original full-state harness (rich view fed to the model).
+ *    v2 = current bench; a compact SystemOne projection, computed LIVE from the
+ *         compact run packets so it evolves as more v2 runs land.
+ *  Minecraft is a separate harness (unaffected by the v1/v2 split). */
+const BENCH_V1_ROWS = [
   {
-    rank: 1,
+    version: "v1",
     game: "StarCraft II",
     model: "TypeSafe Jev 1.13",
     provider: "typesafe",
     wins: 9,
     runs: 12,
-    notes: "Liberation Day. 9 verified wins, 3 incomplete.",
+    notes: "Bench v1 (full state). Liberation Day. 9 verified wins, 3 incomplete.",
     runsFilter: "typesafe",
     drawerGame: "sc2",
   },
   {
-    rank: 2,
+    version: "v1",
     game: "StarCraft II",
     model: "TypeSafe Jev 1.13",
     provider: "openrouter",
     wins: 5,
     runs: 6,
-    notes: "Liberation Day via OpenRouter. 5 verified wins, 1 incomplete.",
+    notes: "Bench v1 (full state). Liberation Day via OpenRouter. 5 verified wins, 1 incomplete.",
     runsFilter: "openrouter",
     drawerGame: "sc2",
   },
   {
-    rank: 3,
+    version: "v1",
     game: "StarCraft II",
     model: "OpenJev wire",
     provider: "openjev",
     wins: 0,
     runs: 9,
-    notes: "Local SystemOne attempts. No verified win.",
+    notes: "Bench v1 (full state). Local SystemOne attempts. No verified win.",
     runsFilter: "openjev",
     drawerGame: "sc2",
   },
   {
-    rank: 4,
+    version: "v1",
     game: "StarCraft II",
     model: "Untagged early harness",
     provider: "untagged",
     wins: 0,
     runs: 51,
-    notes: "37 early maps plus 14 Liberation Day attempts with no backend tag. No verified win.",
+    notes: "Bench v1 (full state). 37 early maps plus 14 Liberation Day attempts with no backend tag. No verified win.",
     runsFilter: "untagged",
     drawerGame: "sc2",
   },
+];
+
+// Compute the v2 (compact) bench live from the compact run packets.
+const PROVIDER_LABEL = { typesafe: "TypeSafe", openrouter: "OpenRouter", openjev: "OpenJev", untagged: "Untagged" };
+function buildV2Rows() {
+  const groups = new Map();
+  for (const run of SC2_RUNS) {
+    if (run.stateMode !== "compact") continue;
+    const key = `${run.via}|${run.model || "unknown"}`;
+    if (!groups.has(key)) {
+      groups.set(key, { via: run.via, model: run.model, wins: 0, runs: 0, incomplete: 0, calls: [] });
+    }
+    const g = groups.get(key);
+    g.runs += 1;
+    if (run.status === "victory") { g.wins += 1; g.calls.push(run.calls); }
+    else g.incomplete += 1;
+  }
+  const modelName = (via, model) => {
+    if (via === "openjev") {
+      if (model === "jev-latest") return "jeff (GLiFormer SystemOne)";
+      if (model === "localjev-latest") return "LocalJev (qwen3.5:4b)";
+      if (model === "openjev-latest") return "OpenJev wire";
+      return model || "OpenJev wire";
+    }
+    if (model && model.includes("typesafe")) return "TypeSafe Jev 1.13";
+    return model || via;
+  };
+  const rows = [];
+  let rank = 1;
+  for (const g of groups.values()) {
+    const avg = g.wins && g.calls.length ? Math.round(g.calls.reduce((a, b) => a + b, 0) / g.calls.length) : null;
+    rows.push({
+      version: "v2",
+      game: "StarCraft II",
+      model: modelName(g.via, g.model),
+      provider: g.via,
+      wins: g.wins,
+      runs: g.runs,
+      notes: `Bench v2 (compact state). ${g.wins} win${g.wins === 1 ? "" : "s"}${g.incomplete ? `, ${g.incomplete} incomplete` : ""}${avg ? `, ~${avg} calls/win` : ""}. Computed live from compact run packets.`,
+      runsFilter: g.via,
+      drawerGame: "sc2",
+    });
+  }
+  // Stable ordering: wins desc, then runs desc, then model.
+  rows.sort((a, b) => b.wins - a.wins || b.runs - a.runs || a.model.localeCompare(b.model));
+  return rows.map((r, i) => ({ ...r, rank: i + 1 }));
+}
+
+// The combined, ranked list the gaming table renders: v1 (historical) then v2 (live).
+const MINECRAFT_ROWS = [
   {
-    rank: 5,
+    version: null,
     game: "Minecraft",
     model: "Astra (gpt-6) + Jev 1.13",
     provider: "typesafe",
     wins: 1,
     runs: 17,
-    notes: "Java 1.16.5 Ender Dragon. 1 verified full clear (NEW_RUN20, 327 steps, bed-blast kill). 16 earlier attempts failed on pathing/stuck/death — all published.",
+    notes: "Java 1.16.5 Ender Dragon. 1 verified full clear (NEW_RUN20, 327 steps, bed-blast kill). 16 earlier attempts failed on pathing/stuck/death — all published. Separate harness (not v1/v2).",
     runsFilter: "all",
     drawerGame: "mc",
   },
+];
+const GAMING_ROWS = [
+  ...BENCH_V1_ROWS.map((r, i) => ({ ...r, rank: i + 1 })),
+  ...buildV2Rows(),
+  ...MINECRAFT_ROWS.map((r, i) => ({ ...r, rank: i + 1 })),
 ];
 
 function escapeHtml(str) {
@@ -245,6 +306,7 @@ const tbodyJev = document.getElementById("lb-body-jev");
 // Gaming elements
 const filterGamingGame = document.getElementById("filter-gaming-game");
 const filterGamingProvider = document.getElementById("filter-gaming-provider");
+const filterGamingVersion = document.getElementById("filter-gaming-version");
 const resultCountGaming = document.getElementById("result-count-gaming");
 const tbodyGaming = document.getElementById("lb-body-gaming");
 
@@ -363,20 +425,30 @@ function updateGamingCount(shown) {
   resultCountGaming.textContent = `Showing ${shown} of ${total} rows`;
 }
 
+function benchBadge(version) {
+  if (version === "v2") return '<span class="badge badge-ours">v2</span>';
+  if (version === "v1") return '<span class="badge badge-official">v1</span>';
+  return '<span class="badge badge-nongame">n/a</span>';
+}
+
 function renderGaming() {
   const game = filterGamingGame.value;
   const provider = filterGamingProvider.value;
+  const version = filterGamingVersion ? filterGamingVersion.value : "all";
 
   const filtered = GAMING_ROWS.filter((r) => {
     if (game !== "all" && r.game !== game) return false;
     if (provider !== "all" && r.provider !== provider) return false;
+    if (version === "none" && r.version !== null) return false;
+    if (version === "v1" && r.version !== "v1") return false;
+    if (version === "v2" && r.version !== "v2") return false;
     return true;
   });
 
   updateGamingCount(filtered.length);
 
   if (!filtered.length) {
-    tbodyGaming.innerHTML = `<tr class="lb-empty"><td colspan="7" class="muted">No rows match these filters.</td></tr>`;
+    tbodyGaming.innerHTML = `<tr class="lb-empty"><td colspan="8" class="muted">No rows match these filters.</td></tr>`;
     return;
   }
 
@@ -385,6 +457,7 @@ function renderGaming() {
       (r) => `
     <tr>
       <td class="rank">${String(r.rank).padStart(2, "0")}</td>
+      <td data-label="Bench">${benchBadge(r.version)}</td>
       <td data-label="Game">${escapeHtml(r.game)}</td>
       <td class="model" data-label="Agent / model"><span class="model-name">${escapeHtml(r.model)}</span></td>
       <td data-label="Provider">${escapeHtml(r.provider)}</td>
@@ -414,7 +487,7 @@ tabs.forEach((tab) => {
   el?.addEventListener("change", renderJevModels);
 });
 
-[filterGamingGame, filterGamingProvider].forEach((el) => {
+[filterGamingGame, filterGamingProvider, filterGamingVersion].forEach((el) => {
   el?.addEventListener("change", renderGaming);
 });
 

@@ -230,6 +230,15 @@
                     <option value="untagged">Untagged</option>
                   </select>
                 </label>
+                <label class="filter">
+                  <span>Bench</span>
+                  <select id="filter-gaming-version" aria-label="Filter by bench version">
+                    <option value="all">All versions</option>
+                    <option value="v2">v2 (compact, current)</option>
+                    <option value="v1">v1 (full state, historical)</option>
+                    <option value="none">Minecraft (separate)</option>
+                  </select>
+                </label>
               </div>
 
               <p id="result-count-gaming" class="result-count" aria-live="polite"></p>
@@ -237,11 +246,12 @@
               <div class="table-wrap" tabindex="0" role="region" aria-label="Gaming results">
                 <table class="lb-table" id="lb-table-gaming">
                   <caption class="table-caption">
-                    StarCraft II + Minecraft · 95 scored runs · 15 verified wins (14 Liberation Day, 1 Ender Dragon) · updated 23 Sep 2026
+                    Bench v1 (full state, historical) + Bench v2 (compact state, current, computed live) · StarCraft II + Minecraft · updated 25 Sep 2026
                   </caption>
                   <thead>
                     <tr>
                       <th scope="col">#</th>
+                      <th scope="col">Bench</th>
                       <th scope="col">Game</th>
                       <th scope="col">Agent / model</th>
                       <th scope="col">Provider</th>
@@ -260,7 +270,7 @@
             </div>
           </div>
 
-          <p class="bench-status">Harness v0.1 · 95 scored runs · 15 verified wins · 2 games (StarCraft II, Minecraft) · updated 23 Sep 2026</p>
+          <p class="bench-status">Bench v1 (full state) and Bench v2 (compact state, current) · v2 is computed live from compact run packets and evolves as runs land · 2 games (StarCraft II, Minecraft) · updated 25 Sep 2026</p>
         </div>
       </section>
     </main>

@@ -91,10 +91,10 @@ function chipLabel(id) {
 
 function renderSc2Card(run) {
   const win = run.status === "victory";
-  const era = run.stateMode === "compact" ? "Compact state" : "Full state";
+  const era = run.stateMode === "compact" ? "Bench v2" : "Bench v1";
   const facts = [
     ["Wire", `${VIA_LABEL[run.via] || run.via}${run.model ? ` · ${run.model}` : ""}`],
-    ["State", era],
+    ["Bench", era],
     ["Calls", run.calls == null ? "—" : String(run.calls)],
     ["Recorded cost", money(run.cost)],
     ["Check", run.source || "—"],
