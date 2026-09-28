@@ -57,7 +57,7 @@ if (!toggle || !drawer || !scrim) {
     if (reduce) {
       finish();
     } else {
-      closeTimer = window.setTimeout(finish, 200);
+      closeTimer = window.setTimeout(finish, 260);
     }
     if (restore) {
       (lastFocus || toggle).focus();
@@ -73,10 +73,6 @@ if (!toggle || !drawer || !scrim) {
 
   drawer.querySelectorAll("a[href]").forEach((link) => {
     link.addEventListener("click", () => closeNav({ restore: false }));
-  });
-
-  document.querySelector(".logo")?.addEventListener("click", () => {
-    closeNav({ restore: false });
   });
 
   document.addEventListener("keydown", (e) => {
@@ -101,38 +97,8 @@ if (!toggle || !drawer || !scrim) {
   });
 
   window.addEventListener("resize", () => {
-    if (window.matchMedia("(min-width: 768px)").matches) {
+    if (window.matchMedia("(min-width: 860px)").matches) {
       closeNav({ restore: false });
     }
   });
-}
-
-const sectionIds = ["home", "leaderboard", "use-cases", "open-source", "about", "support", "sponsor"];
-const navLinks = [
-  ...document.querySelectorAll('.nav a[href^="#"], .mobile-nav a[href^="#"]'),
-];
-
-const sections = sectionIds
-  .map((id) => document.getElementById(id))
-  .filter(Boolean);
-
-if (sections.length && "IntersectionObserver" in window) {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((e) => e.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (!visible) return;
-      const href = `#${visible.target.id}`;
-      navLinks.forEach((a) => {
-        if (a.getAttribute("href") === href && href !== "#home") {
-          a.setAttribute("aria-current", "page");
-        } else {
-          a.removeAttribute("aria-current");
-        }
-      });
-    },
-    { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.6] }
-  );
-  sections.forEach((section) => observer.observe(section));
 }

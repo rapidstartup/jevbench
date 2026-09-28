@@ -1,272 +1,154 @@
-/**
- * JevBench v1 — leaderboard filters + use-case list.
- * Rows are measured smokes / harness runs (ours) or official-cited cards.
- * No fabricated win rates.
- */
+/** Home page: headline standings, arenas, records and roadmap. */
 
-import "@fontsource-variable/ibm-plex-sans/wght.css";
-import "@fontsource/ibm-plex-mono/latin-400.css";
-import "@fontsource/ibm-plex-mono/latin-500.css";
-import "@fontsource/ibm-plex-mono/latin-600.css";
-
-import "./nav.js";
+import { escapeHtml, observeMotion, stillImg } from "./ui.js";
 import "./support.js";
-import { initRunDrawer } from "./run-drawer.js";
-import { USE_CASES, TRANCHE_META, shortLabel } from "./use-cases.js";
-import { initJevSuit } from "./jev-suit.js";
+import {
+  ROADMAP,
+  fmtDate,
+  fmtInt,
+  fmtPct,
+  gameSummary,
+  latestWins,
+  modelMeta,
+  records,
+  standings,
+  GAMES,
+} from "./bench.js";
 
-const byId = Object.fromEntries(USE_CASES.map((u) => [u.id, u]));
+const STATUS_TAG = { Live: "tag-live", "Coming soon": "tag-soon", Planned: "tag-muted" };
 
-/** Measured / smoked results (20 Sep 2026 PT). Honest — no invented win rates. */
-const ROWS = [
-  {
-    rank: 1,
-    model: "TypeSafe Jev 1.13",
-    family: "jev",
-    usecase: "uc-20",
-    notes: "14 verified Liberation Day wins for typesafe/jev-1.13: 9 on the TypeSafe wire, 5 via OpenRouter. HQ destroyed or critically damaged, Raynor alive.",
-    scoreLabel: "14 wins · 18 runs",
-    runs: "model:typesafe/jev-1.13",
-    runsTitle: "TypeSafe Jev 1.13",
-    source: "ours",
-    speedLabel: "70–500 ms",
-    costIn: "$0.042/MTok",
-    costOut: "FREE",
-    costSource: "TypeSafe blog",
-  },
-  {
-    rank: 2,
-    model: "LocalJev",
-    family: "jev",
-    usecase: "uc-20",
-    notes: "OpenJev wire, model openjev-latest. 9 Liberation Day attempts, all incomplete. No verified win.",
-    scoreLabel: "0 wins · 9 runs",
-    runs: "openjev",
-    runsTitle: "OpenJev wire",
-    source: "ours",
-    speedLabel: "local / depends",
-    costIn: "FREE",
-    costOut: "FREE",
-    costSource: "self-host; upstream LLM billed separately if not local",
-  },
-  {
-    rank: 3,
-    model: "Laya",
-    family: "jev",
-    usecase: "uc-20",
-    notes: "PyPI · box CPU · predict ~0.14s after load",
-    scoreLabel: "smoke OK",
-    source: "ours",
-    speedLabel: "~0.14s (measured)",
-    costIn: "FREE",
-    costOut: "FREE",
-    costSource: "open/local",
-  },
-  {
-    rank: 4,
-    model: "OpenJev (browser)",
-    family: "jev",
-    usecase: "uc-20",
-    notes: "openjev.com MiniCPM WebGPU · MSI Chrome OK · box blocked (no GPU)",
-    scoreLabel: "smoke OK (MSI)",
-    source: "ours",
-    speedLabel: "depends on GPU",
-    costIn: "FREE",
-    costOut: "FREE",
-    costSource: "WebGPU local",
-  },
-  {
-    rank: 5,
-    model: "jeff",
-    family: "jev",
-    usecase: "uc-20",
-    notes: "HTTP smoke on box",
-    scoreLabel: "smoke OK",
-    source: "ours",
-    speedLabel: "—",
-    costIn: "FREE",
-    costOut: "FREE",
-    costSource: "local HTTP",
-  },
-  {
-    rank: 6,
-    model: "Laya-MLX",
-    family: "jev",
-    usecase: "uc-20",
-    notes: "Official: mizorewww/laya-mlx BENCHMARKS · M3 Max FP16 · EN 13.42 ms / ML 7.39 ms P50 · not run here (Mac-only)",
-    scoreLabel: "13.4 ms EN p50",
-    source: "official",
-    speedLabel: "13.4 ms p50 (EN)",
-    costIn: "FREE",
-    costOut: "FREE",
-    costSource: "BENCHMARKS.md (M3 Max FP16)",
-  },
-  {
-    rank: 7,
-    model: "Gemini Flash + Jev fixtures",
-    family: "gemini",
-    usecase: "uc-6",
-    notes: "Dual-brain dry-run · Gemini 2.5 Flash + Jev Goler · 3/3 sensible · pending live traynor01 with guide",
-    scoreLabel: "3/3 dry-run OK",
-    source: "ours",
-    speedLabel: "—",
-    costIn: "$0.30/MTok",
-    costOut: "$2.50/MTok",
-    costSource: "Google AI pricing; free tier also available",
-  },
-  {
-    rank: 8,
-    model: "NanoJev",
-    family: "jev",
-    usecase: "uc-20",
-    notes: "Cloned only · smoke not run yet",
-    scoreLabel: "pending smoke",
-    source: "ours",
-    speedLabel: "—",
-    costIn: "FREE",
-    costOut: "FREE",
-    costSource: "HF open weights / self-host GPU",
-  },
-];
-
-const tbody = document.getElementById("lb-body-summary");
-const useCasesRoot = document.getElementById("use-cases-root");
-
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+function rank(n) {
+  return String(n).padStart(2, "0");
 }
 
-function categoryBadge(cat) {
-  if (cat === "game") return '<span class="badge badge-game">GAME</span>';
-  return '<span class="badge badge-nongame">NON-GAME</span>';
+function renderHeroBoard() {
+  const root = document.getElementById("hero-board");
+  if (!root) return;
+  const rows = standings("sc2").slice(0, 5);
+  root.innerHTML = `
+    <div class="mini-row mini-row-head">
+      <span>P</span><span>Model</span><span>Record</span><span>Win rate</span>
+    </div>
+    ${rows
+      .map(
+        (r, i) => `
+      <a class="mini-row row-in" style="--i: ${i}" data-rank="${r.rank}" href="/leaderboard?model=${encodeURIComponent(r.modelId)}"
+         aria-label="${escapeHtml(`${r.name}, rank ${r.rank}, ${r.wins} wins from ${r.runs} runs`)}">
+        <span class="mini-rank">${rank(r.rank)}</span>
+        <span class="mini-name">${escapeHtml(r.name)}<small>${escapeHtml(r.by)}</small></span>
+        <span class="mini-record">${r.wins}–${r.runs - r.wins}</span>
+        <span class="mini-rate">${fmtPct(r.rate)}</span>
+      </a>`
+      )
+      .join("")}
+    <a class="mini-row mini-row-open row-in" style="--i: ${rows.length}" href="/about#open-source">
+      <span class="mini-rank">··</span>
+      <span class="mini-name">your model<small>run the open harness</small></span>
+      <span class="mini-record">———</span>
+      <span class="mini-rate">?</span>
+    </a>`;
 }
 
-function sourceBadge(source) {
-  if (source === "official") {
-    return '<span class="badge badge-official">OFFICIAL</span>';
+function renderTicker() {
+  const root = document.getElementById("ticker");
+  if (!root) return;
+  const wins = latestWins(10);
+  if (!wins.length) {
+    root.hidden = true;
+    return;
   }
-  return '<span class="badge badge-ours">OURS</span>';
-}
-
-function priorityBadge(p) {
-  const cls =
-    p === "P0" ? "badge-p0" : p === "P1" ? "badge-p1" : "badge-p2";
-  return `<span class="badge ${cls}">${escapeHtml(p)}</span>`;
-}
-
-function enrichRow(r) {
-  const uc = byId[r.usecase];
-  return {
-    ...r,
-    usecaseLabel: uc ? `${shortLabel(uc)} (#${uc.num})` : r.usecase,
-    category: uc ? uc.category : "nongame",
-  };
-}
-
-function renderHomepageSummary() {
-  if (!tbody) return;
-  
-  const enriched = ROWS.slice(0, 5).map(enrichRow);
-
-  tbody.innerHTML = enriched
+  const group = wins
     .map(
       (r) => `
-    <tr data-usecase="${r.usecase}" data-model="${r.family}" data-category="${r.category}" data-source="${escapeHtml(r.source)}">
-      <td class="rank">${String(r.rank).padStart(2, "0")}</td>
-      <td class="model"><span class="model-name">${escapeHtml(r.model)}</span> ${sourceBadge(r.source)}</td>
-      <td data-label="Use case">${r.runs ? `<button type="button" class="run-open" data-runs="${escapeHtml(r.runs)}" data-title="${escapeHtml(r.runsTitle || r.model)}">View runs</button><a class="uc-catalog" href="#${escapeHtml(r.usecase)}">Catalog</a>` : `<a class="uc-row-link" href="#${escapeHtml(r.usecase)}">${escapeHtml(r.usecaseLabel)}</a>`}</td>
-      <td data-label="Category">${categoryBadge(r.category)}</td>
-      <td class="score" data-label="Score"><span class="score-label">${escapeHtml(r.scoreLabel)}</span></td>
-      <td class="cost" data-label="Cost in">${escapeHtml(r.costIn || "—")}</td>
-    </tr>`
+      <span class="ticker-item">
+        <i>★</i> Verified win
+        <b>${escapeHtml(modelMeta(r.modelId).name)}</b>
+        ${escapeHtml(r.scenario)} · ${fmtInt(r.decisions)} decisions · ${fmtDate(r.date)}
+      </span>`
     )
     .join("");
+  root.innerHTML = `
+    <div class="ticker-track">
+      <div class="ticker-group">${group}</div>
+      <div class="ticker-group" aria-hidden="true">${group}</div>
+    </div>`;
 }
 
-function renderUseCasesSection() {
-  if (!useCasesRoot) return;
-  const order = ["games", "platform", "product", "nongame"];
-  useCasesRoot.innerHTML = order
-    .map((key) => {
-      const meta = TRANCHE_META[key];
-      const items = USE_CASES.filter((u) => u.tranche === key);
+function renderArenas() {
+  const root = document.getElementById("arena-grid");
+  if (!root) return;
+  root.innerHTML = Object.keys(GAMES)
+    .map((key, i) => {
+      const g = gameSummary(key);
+      const still = g.cover && (g.cover.media.stills || [])[0];
       return `
-      <div class="uc-tranche" id="tranche-${escapeHtml(key)}">
-        <div class="uc-tranche-head">
-          <h3>${escapeHtml(meta.title)} ${priorityBadge(meta.badge)}</h3>
-          <p class="muted">${escapeHtml(meta.blurb)}</p>
+      <a class="arena reveal" style="--i: ${i}" href="/leaderboard?game=${key}">
+        <div class="arena-cover">
+          ${still ? stillImg(still.url, `${g.name} gameplay from a verified win`) : ""}
+          <span class="tag tag-live"><span class="pulse" aria-hidden="true"></span>Live</span>
+          <div class="arena-title">
+            <h3>${escapeHtml(g.name)}</h3>
+            <p class="label">${escapeHtml(g.scenario)} · ${escapeHtml(g.kind)}</p>
+          </div>
         </div>
-        <div class="uc-grid">
-          ${items
-            .map(
-              (u) => `
-            <article class="card uc-card" id="${escapeHtml(u.id)}" data-usecase="${escapeHtml(u.id)}">
-              <div class="uc-card-top">
-                <span class="uc-num">#${u.num}</span>
-                ${priorityBadge(u.priority)}
-                ${categoryBadge(u.category)}
-              </div>
-              <h4>${escapeHtml(u.title)}</h4>
-              <p>${escapeHtml(u.writeup)}</p>
-              <p class="uc-links">
-                ${u.links
-                  .map(
-                    (l) =>
-                      `<a href="${escapeHtml(l.href)}" target="_blank" rel="noopener">${escapeHtml(l.label)} →</a>`
-                  )
-                  .join(" · ")}
-              </p>
-            </article>`
-            )
-            .join("")}
+        <div class="arena-body">
+          <p>${escapeHtml(g.objective)}</p>
+          <dl class="arena-stats">
+            <div><dt class="label">Wins</dt><dd>${fmtInt(g.wins)}</dd></div>
+            <div><dt class="label">Runs</dt><dd>${fmtInt(g.runs)}</dd></div>
+            <div><dt class="label">Top rate</dt><dd>${g.leader ? fmtPct(g.leader.rate) : "—"}</dd></div>
+          </dl>
+          <div class="arena-leader">
+            <div>
+              <span class="label label-gold">★ Leading</span>
+              <strong>${g.leader ? escapeHtml(g.leader.name) : "Open"}</strong>
+            </div>
+            <span class="text-link">Standings →</span>
+          </div>
         </div>
-      </div>`;
+      </a>`;
     })
     .join("");
 }
 
-renderHomepageSummary();
-renderUseCasesSection();
+function renderRecords() {
+  const root = document.getElementById("record-grid");
+  if (!root) return;
+  root.innerHTML = records()
+    .map((r) => {
+      const href = r.run ? `/leaderboard?run=${encodeURIComponent(r.run.id)}` : "/leaderboard";
+      return `
+      <a class="record" href="${href}">
+        <span class="label">${escapeHtml(r.label)}</span>
+        <p class="record-value">${escapeHtml(r.value)}<small>${escapeHtml(r.unit)}</small></p>
+        <p class="record-holder">${escapeHtml(r.holder)}<span>${escapeHtml(r.context)}</span></p>
+      </a>`;
+    })
+    .join("");
+}
 
-document.querySelectorAll(".table-wrap").forEach((tableWrap) => {
-  tableWrap.addEventListener("keydown", (e) => {
-    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-    if (tableWrap.scrollWidth <= tableWrap.clientWidth) return;
-    e.preventDefault();
-    tableWrap.scrollLeft += e.key === "ArrowRight" ? 48 : -48;
-  });
-});
+function renderRoadmap() {
+  const root = document.getElementById("phases");
+  if (!root) return;
+  root.innerHTML = ROADMAP.map(
+    (phase, i) => `
+    <article class="phase reveal" style="--i: ${i}" data-status="${escapeHtml(phase.status)}">
+      <header class="phase-head">
+        <h3><span>${escapeHtml(phase.phase)}</span>${escapeHtml(phase.title)}</h3>
+        <span class="tag ${STATUS_TAG[phase.status] || ""}">${escapeHtml(phase.status)}</span>
+      </header>
+      <ul>
+        ${phase.items
+          .map((item) => `<li><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.text)}</span></li>`)
+          .join("")}
+      </ul>
+    </article>`
+  ).join("");
+}
 
-document.querySelectorAll("[data-copy]").forEach((btn) => {
-  const original = btn.textContent;
-  btn.addEventListener("click", async () => {
-    const text = btn.getAttribute("data-copy") || "";
-    try {
-      await navigator.clipboard.writeText(text);
-      btn.textContent = "Copied";
-    } catch {
-      btn.textContent = "Copy failed";
-    }
-    window.setTimeout(() => {
-      btn.textContent = original;
-    }, 1600);
-  });
-});
-
-document.getElementById("contact-form")?.addEventListener("submit", (e) => {
-  const form = e.target;
-  const name = form.name.value?.trim() || "";
-  const email = form.email.value?.trim() || "";
-  const body = form.body.value?.trim() || "";
-  const subject = encodeURIComponent(`JevBench contact from ${name || email}`);
-  const mailBody = encodeURIComponent(`From: ${name}\nEmail: ${email}\n\n${body}`);
-  window.location.href = `mailto:hello@jevbench.dev?subject=${subject}&body=${mailBody}`;
-  e.preventDefault();
-});
-
-initJevSuit();
-initRunDrawer();
+renderHeroBoard();
+renderTicker();
+renderArenas();
+renderRecords();
+renderRoadmap();
+observeMotion();

@@ -1,210 +1,198 @@
 /**
- * Jev use-case list: 20 core scenarios plus 10 product-shaped additions.
- * Vendor/demo numbers are directional — not certified bench scores.
- * Tranche order: Games (P0) → Platform (P1) → Product-shaped (P1) → Non-game (rest).
+ * Where a decision model fits: 30 patterns in four groups.
+ * Figures quoted in the write-ups come from the linked sources, not from JevBench runs.
+ *
+ * status: "live"    — scored on the JevBench leaderboard today
+ *         "planned" — a JevBench benchmark is on the roadmap
  */
 
+export const GROUPS = [
+  {
+    id: "games",
+    title: "Games and control loops",
+    blurb:
+      "Fast decisions with a clear win or loss. The hardest test of speed, confidence and choosing between many options.",
+  },
+  {
+    id: "agents",
+    title: "Agent infrastructure",
+    blurb:
+      "A decision model in front of a larger AI system: routing requests, choosing tools and narrowing options before a bigger model gets involved.",
+  },
+  {
+    id: "safety",
+    title: "Safety and approval gates",
+    blurb:
+      "Checks that run before anything irreversible happens, and send only the uncertain cases to a person.",
+  },
+  {
+    id: "operations",
+    title: "Operations and customer decisions",
+    blurb: "Everyday product decisions made on every message, ticket or order, at a cost that allows it.",
+  },
+];
+
 export const USE_CASES = [
+  /* —— games —— */
+  {
+    id: "uc-20",
+    group: "games",
+    status: "live",
+    title: "Real-time strategy and game control",
+    writeup:
+      "Emulators, strategy games and drones share one pattern: code handles physics, safety and arithmetic, and the decision model owns the judgment call. Community demos cover Super Mario, StarCraft and drone tactics.",
+    links: [
+      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
+      { href: "https://github.com/fhshaik/typesafe-mario", label: "typesafe-mario" },
+      { href: "https://github.com/phyous/tsai-sc", label: "tsai-sc" },
+      { href: "https://github.com/RomanSlack/jev-drone", label: "jev-drone" },
+      { href: "https://github.com/AbdelStark/awesome-typesafe", label: "awesome-typesafe" },
+    ],
+  },
   {
     id: "uc-17",
-    num: 17,
-    title: "Real-time DOOM bot (structured game state)",
-    tranche: "games",
-    priority: "P0",
-    category: "game",
+    group: "games",
+    status: "planned",
+    title: "Real-time DOOM agent",
     writeup:
-      "Official TypeSafe fun demo: reactive Doom agent on structured game-state (not pixels) demonstrating real-time System One decisions; team joked about ~10 queries/sec cost. Highly relevant to game harnesses.",
+      "A reactive DOOM agent that plays from structured game state instead of pixels, deciding in real time. Shown by TypeSafe at launch.",
     links: [
       { href: "https://typesafe.ai/blog/introducing-system-one-models-and-jev", label: "TypeSafe blog" },
     ],
   },
   {
     id: "uc-18",
-    num: 18,
-    title: "Wikiracing high-cardinality link choice",
-    tranche: "games",
-    priority: "P0",
-    category: "game",
+    group: "games",
+    status: "planned",
+    title: "Wikiracing",
     writeup:
-      "At each Wikipedia page choose among hundreds–thousands of links toward a target; shows high-cardinality Choice (up to 255; higher via two-stage score-then-choose) without hallucinated URLs.",
+      "On each Wikipedia page, pick the link that gets closest to the target from hundreds of options. A test of choosing well from a very long list without inventing links.",
     links: [
       { href: "https://typesafe.ai/blog/introducing-system-one-models-and-jev", label: "TypeSafe blog" },
     ],
   },
+
+  /* —— agent infrastructure —— */
   {
     id: "uc-19",
-    num: 19,
-    title: "Ultrafast browser agent (flight booking)",
-    tranche: "games",
-    priority: "P0",
-    category: "nongame",
+    group: "agents",
+    title: "Ultrafast browser agent",
     writeup:
-      "browser-use/jev-ultrafast: page → numbered element table; one Jev call picks operation + target; small LLM only for TYPE_TEXT. Author-reported Zürich→London on Google Flights in ~7.1s / ~$0.0039 (directional). Speculative fan-out over actions.",
+      "The page becomes a numbered list of elements and one call picks the action and its target. The author reports booking Zürich to London on Google Flights in about seven seconds for under half a cent.",
     links: [
       { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
       { href: "https://github.com/browser-use/jev-ultrafast", label: "jev-ultrafast" },
     ],
   },
   {
-    id: "uc-20",
-    num: 20,
-    title: "Emulator / RTS / drone game-adjacent control loops",
-    tranche: "games",
-    priority: "P0",
-    category: "game",
-    writeup:
-      "Cluster of launch-week game/control demos: Super Mario (RAM→object JSON), StarCraft shareware mission, drone tactical judgment ~2.5Hz advisory-only, computer-use OCR→Jev action pick, market-maker ~300ms blocks. Pattern: keep physics/safety/arithmetic in code; Jev owns the narrow judgment.",
-    links: [
-      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
-      { href: "https://github.com/fhshaik/typesafe-mario", label: "typesafe-mario" },
-      { href: "https://github.com/phyous/tsai-sc", label: "tsai-sc" },
-      { href: "https://github.com/RomanSlack/jev-drone", label: "jev-drone" },
-      { href: "https://github.com/awlevin/typesafe-computer-use", label: "computer-use" },
-      { href: "https://github.com/jarrodwatts/jev-trader", label: "jev-trader" },
-      { href: "https://github.com/AbdelStark/awesome-typesafe", label: "awesome-typesafe" },
-    ],
-  },
-  {
     id: "uc-6",
-    num: 6,
-    title: "Cascade: cheap Jev → code → specialist LLM",
-    tranche: "platform",
-    priority: "P1",
-    category: "nongame",
+    group: "agents",
+    title: "Cascade routing",
     writeup:
-      "Jev classifies intent/complexity; simple paths stay pure code; hard paths call a specialist LLM; edge cases escalate to humans. Positions Jev as the front door, not an LLM replacement.",
+      "Classify each request by intent and difficulty. Simple paths stay in code, hard ones go to a specialist LLM, and edge cases go to a person. The decision model is the front door, not a replacement for the LLM.",
     links: [
       { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
     ],
   },
   {
     id: "uc-10",
-    num: 10,
-    title: "Dynamic tool-definition unfurl",
-    tranche: "platform",
-    priority: "P1",
-    category: "nongame",
+    group: "agents",
+    title: "Tool selection per turn",
     writeup:
-      "Pre-LLM Jev decides which tool schemas to expose this turn, reducing tool/context burden on the main model and improving tool-calling behavior on weaker models.",
+      "Decide which tool definitions the main model sees on each turn. Less context to carry, and better tool calling from smaller models.",
     links: [
       { href: "https://x.com/1374854868175888384/status/2100003037150683593", label: "Field note" },
     ],
   },
   {
-    id: "uc-1",
-    num: 1,
-    title: "Support ticket department routing",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    id: "uc-7",
+    group: "agents",
+    title: "Model and tool routing",
     writeup:
-      "Classify an inbound support message into a closed set (billing / technical / sales / other) and let code route the ticket. Classic Choice over known queues; low latency means it can run on every message.",
+      "Choose which tool or specialist model handles the next step, or whether to escalate. A natural fit wherever the set of answers is known in advance.",
+    links: [{ href: "https://jevai.dev/", label: "jevai.dev" }],
+  },
+  {
+    id: "uc-g2",
+    group: "agents",
+    status: "planned",
+    title: "Self-healing tool calls",
+    writeup:
+      "After an API error, choose the recovery: retry, wait, change parameters, switch provider or escalate.",
     links: [
-      { href: "https://jevai.dev/", label: "jevai.dev" },
-      { href: "https://openrouter.ai/~typesafe/jev-latest", label: "OpenRouter" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
-    id: "uc-2",
-    num: 2,
-    title: "Urgency / time-sensitivity gate",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    id: "uc-g5",
+    group: "agents",
+    status: "planned",
+    title: "Branch pruning",
     writeup:
-      "Noul (“does this convey urgency?”) returns a 0–1 probability so code can escalate only when above a threshold (e.g. urgent + billing). Replaces brittle keyword heuristics.",
+      "Score around twenty possible next steps in parallel and drop the weak ones before spending on expensive reasoning.",
     links: [
-      { href: "https://openrouter.ai/~typesafe/jev-latest", label: "OpenRouter" },
-      { href: "https://jevai.dev/", label: "jevai.dev" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
-    id: "uc-3",
-    num: 3,
-    title: "Customer frustration scoring",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    id: "uc-g4",
+    group: "agents",
+    title: "Per-task permissions",
     writeup:
-      "Score frustration on an ordered rubric (calm → civil frustration → very angry) for prioritization and tone of response. Use with department routing in one parallel call.",
+      "Grant tools, data and spending limits for one task at a time instead of permanent broad access.",
     links: [
-      { href: "https://openrouter.ai/~typesafe/jev-latest", label: "OpenRouter" },
-      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
-  {
-    id: "uc-4",
-    num: 4,
-    title: "Speculative fan-out triage (many questions, one call)",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
-    writeup:
-      "Ask category, severity, has-repro, refund-wanted, frustration together; questions run in parallel so extras cost tokens not wall-clock. Code then branches on the answers that matter. Cookbook claims large batching speedups on multi-question briefs (directional).",
-    links: [
-      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
-    ],
-  },
+
+  /* —— safety —— */
   {
     id: "uc-5",
-    num: 5,
-    title: "Confidence-gated human-in-the-loop",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    group: "safety",
+    title: "Confidence-gated approval",
     writeup:
-      "Because RLCD trains calibrated confidence, different actions get different bars (read-only balance check vs approve money transfer). Low confidence → human; high confidence → auto.",
+      "Jev reports calibrated confidence, so each action can have its own bar. Checking a balance clears easily. Approving a transfer needs more. Low confidence goes to a person.",
     links: [
       { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
       { href: "https://typesafe.ai/blog/introducing-system-one-models-and-jev", label: "TypeSafe blog" },
     ],
   },
   {
-    id: "uc-7",
-    num: 7,
-    title: "Agent tool / model selection",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    id: "uc-g3",
+    group: "safety",
+    title: "Irreversible action check",
     writeup:
-      "Decide which tool or specialist model should handle the next step, or whether to escalate. Fits agent orchestration where the answer space is known.",
-    links: [{ href: "https://jevai.dev/", label: "jevai.dev" }],
-  },
-  {
-    id: "uc-8",
-    num: 8,
-    title: "Pre- and post-LLM quality / contradiction checks",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
-    writeup:
-      "Field use: run Jev every turn (~p50 150ms claimed, directional) for questions like “did this output contradict prior user facts?” and “should we send a follow-up?” — cheaper/faster than deep classifiers every message.",
+      "Score how reversible an action is before sending an email, deleting a file, moving money or changing permissions. Proceed only when it clears the bar.",
     links: [
-      { href: "https://x.com/1374854868175888384/status/2100003037150683593", label: "Field note" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
-    id: "uc-9",
-    num: 9,
-    title: "Proactive messaging / silence decisions",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    id: "uc-g10",
+    group: "safety",
+    title: "Human review queues",
     writeup:
-      "Same field note: “a few seconds of silence — should we proactively message?” as a fast decision chain without adding multi-second LLM latency to chat UX.",
+      "Send a decision to a person only when it is uncertain, expensive or irreversible. Everything else proceeds automatically.",
     links: [
-      { href: "https://x.com/1374854868175888384/status/2100003037150683593", label: "Field note" },
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
+    ],
+  },
+  {
+    id: "uc-g1",
+    group: "safety",
+    title: "Agent spend firewall",
+    writeup:
+      "Approve, review or deny an agent's purchase using price, vendor, user rules and purchase history, before any money moves.",
+    links: [
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
     id: "uc-11",
-    num: 11,
-    title: "Trust & safety / policy violation checks",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    group: "safety",
+    title: "Trust and safety checks",
     writeup:
-      "Evaluate content against specific policy questions; route low-confidence or high-risk cases to review. Also framed as jailbreak/guardrail checking of LLM prompts and outputs.",
+      "Evaluate content against specific policy questions and route risky or low-confidence cases to review. Also used to screen LLM prompts and outputs.",
     links: [
       { href: "https://jevai.dev/", label: "jevai.dev" },
       { href: "https://typesafe.ai/blog/introducing-system-one-models-and-jev", label: "TypeSafe blog" },
@@ -212,264 +200,157 @@ export const USE_CASES = [
   },
   {
     id: "uc-12",
-    num: 12,
-    title: "Verify / score / judge LLM outputs",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    group: "safety",
+    title: "Judging LLM output",
     writeup:
-      "System One pitch: score, judge, verify, guardrail LLM reasoning traces and outputs as structured decisions inside software workflows.",
+      "Score and verify an LLM's reasoning and answers as structured decisions inside a workflow.",
     links: [
       { href: "https://typesafe.ai/blog/introducing-system-one-models-and-jev", label: "TypeSafe blog" },
     ],
   },
   {
-    id: "uc-13",
-    num: 13,
-    title: "Recommendations & candidate relevance ranking",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    id: "uc-8",
+    group: "safety",
+    title: "Contradiction checks",
     writeup:
-      "Score how well candidate items match user context; combine with your own ranking policies. Jev is the judgment layer, not retrieval.",
-    links: [{ href: "https://jevai.dev/", label: "jevai.dev" }],
+      "On every turn, ask whether a reply contradicts what the user said earlier. One team reports a median of about 150 ms per check.",
+    links: [
+      { href: "https://x.com/1374854868175888384/status/2100003037150683593", label: "Field note" },
+    ],
+  },
+
+  /* —— operations —— */
+  {
+    id: "uc-1",
+    group: "operations",
+    title: "Support ticket routing",
+    writeup:
+      "Sort each inbound message into billing, technical, sales or other, and let code route the ticket. Fast enough to run on every message.",
+    links: [
+      { href: "https://jevai.dev/", label: "jevai.dev" },
+      { href: "https://openrouter.ai/~typesafe/jev-latest", label: "OpenRouter" },
+    ],
   },
   {
-    id: "uc-14",
-    num: 14,
-    title: "Resume / candidate composite scoring",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    id: "uc-2",
+    group: "operations",
+    title: "Urgency detection",
     writeup:
-      "Break “how good is this candidate?” into independent Score dimensions (e.g. Python depth, leadership, system design), then weight in code — reweight without re-prompting.",
+      "Get a probability that a message is urgent and escalate above a threshold. A replacement for brittle keyword rules.",
+    links: [
+      { href: "https://openrouter.ai/~typesafe/jev-latest", label: "OpenRouter" },
+      { href: "https://jevai.dev/", label: "jevai.dev" },
+    ],
+  },
+  {
+    id: "uc-3",
+    group: "operations",
+    title: "Customer frustration scoring",
+    writeup:
+      "Score frustration from calm to very angry to set priority and tone. Runs alongside ticket routing in a single call.",
+    links: [
+      { href: "https://openrouter.ai/~typesafe/jev-latest", label: "OpenRouter" },
+      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
+    ],
+  },
+  {
+    id: "uc-4",
+    group: "operations",
+    title: "Triage in one call",
+    writeup:
+      "Ask for category, severity, refund intent and frustration together. The questions run in parallel, so extra ones add tokens, not waiting time.",
     links: [
       { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
     ],
   },
   {
-    id: "uc-15",
-    num: 15,
-    title: "RAG retrieve-then-judge (passage filter)",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
+    id: "uc-9",
+    group: "operations",
+    title: "Proactive messaging",
     writeup:
-      "Retrieve widely, then Noul/Score each passage for relevance/evidence before stuffing an expensive context window. Same shape as TypeSafe RAG/citation cookbooks.",
+      "After a few seconds of silence, decide whether to send a follow-up, without adding LLM latency to the chat.",
     links: [
-      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
-    ],
-  },
-  {
-    id: "uc-16",
-    num: 16,
-    title: "Bulk paper / document classification at extreme cheapness",
-    tranche: "nongame",
-    priority: "P2",
-    category: "nongame",
-    writeup:
-      "Launch-week demo (1kpapers): ~1,018 papers summarized with a generative model then Choice-classified by Jev — summaries ~$3.99 vs classifications ~$0.08 (author-reported, directional). Pattern: different models for different workflow stages.",
-    links: [
-      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
-    ],
-  },
-  {
-    id: "uc-g1",
-    num: 21,
-    title: "Agent spend firewall",
-    tranche: "product",
-    priority: "P2",
-    category: "nongame",
-    writeup:
-      "Approve / review / deny agent purchases using price, vendor, user rules, and purchase history, with confidence. Product-shaped gate for spend before money moves.",
-    links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
-    ],
-  },
-  {
-    id: "uc-g2",
-    num: 22,
-    title: "Self-healing tool calls",
-    tranche: "product",
-    priority: "P1",
-    category: "nongame",
-    writeup:
-      "After an API error: retry, wait, change parameters, switch providers, or escalate. Suggested P1 bench scenario for recovery Choice under failure.",
-    links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
-    ],
-  },
-  {
-    id: "uc-g3",
-    num: 23,
-    title: "Irreversible action detector",
-    tranche: "product",
-    priority: "P1",
-    category: "nongame",
-    writeup:
-      "Score reversibility before email send, file delete, money movement, or permission changes. Safety gate: only proceed when reversibility (or human approval) clears the bar.",
-    links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
-    ],
-  },
-  {
-    id: "uc-g4",
-    num: 24,
-    title: "Dynamic permission engine",
-    tranche: "product",
-    priority: "P2",
-    category: "nongame",
-    writeup:
-      "Per-task tool, data, and spend limits instead of permanent broad access. Jev chooses the scoped capability set for this turn.",
-    links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
-    ],
-  },
-  {
-    id: "uc-g5",
-    num: 25,
-    title: "Agent branch pruning",
-    tranche: "product",
-    priority: "P1",
-    category: "nongame",
-    writeup:
-      "Score ~20 next steps in parallel; kill weak branches before expensive reasoning. Suggested P1 bench for high-cardinality Score-then-prune.",
-    links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
+      { href: "https://x.com/1374854868175888384/status/2100003037150683593", label: "Field note" },
     ],
   },
   {
     id: "uc-g6",
-    num: 26,
-    title: "Production incident controller",
-    tranche: "product",
-    priority: "P1",
-    category: "nongame",
+    group: "operations",
+    status: "planned",
+    title: "Incident response",
     writeup:
-      "From logs, deploys, customers, and health: ignore, rollback, restart, page, or investigate. PagerDuty-shaped; react before Slack. Suggested P1 bench.",
-    links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
-    ],
-  },
-  {
-    id: "uc-g7",
-    num: 27,
-    title: "Live negotiation policy",
-    tranche: "product",
-    priority: "P2",
-    category: "nongame",
-    writeup:
-      "Sales / procurement / collections: discount, counter, hold firm, offer terms, or escalate (“Clulely”-like). Closed Choice over live deal state.",
-    links: [
-      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
-    ],
-  },
-  {
-    id: "uc-g8",
-    num: 28,
-    title: "Autonomous refund desk",
-    tranche: "product",
-    priority: "P2",
-    category: "nongame",
-    writeup:
-      "Order history, customer value, fraud, item cost, and policy → approve, reject, or review. Confidence-aware refund decisions.",
+      "Read logs, deploys and service health, then choose: ignore, roll back, restart, page someone or investigate.",
     links: [
       { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
     id: "uc-g9",
-    num: 29,
-    title: "Realtime marketplace dispatch",
-    tranche: "product",
-    priority: "P1",
-    category: "nongame",
+    group: "operations",
+    status: "planned",
+    title: "Marketplace dispatch",
     writeup:
-      "Pick / rematch providers by location, price, quality, availability, cancellation risk, and preferences. Suggested P1 bench for realtime dispatch Choice.",
+      "Match and rematch providers in real time by location, price, quality, availability and cancellation risk.",
     links: [
       { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
   {
-    id: "uc-g10",
-    num: 30,
-    title: "Confidence-based human queues",
-    tranche: "product",
-    priority: "P1",
-    category: "nongame",
+    id: "uc-g8",
+    group: "operations",
+    title: "Refund decisions",
     writeup:
-      "Route only uncertain, expensive, or irreversible decisions to a person. Safety gate companion to calibrated confidence and irreversible-action detection.",
+      "Weigh order history, customer value, fraud signals, item cost and policy, then approve, reject or send to review.",
     links: [
       { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
     ],
   },
-
+  {
+    id: "uc-g7",
+    group: "operations",
+    title: "Live negotiation",
+    writeup:
+      "In sales, procurement or collections, choose the next move: discount, counter, hold firm, offer terms or escalate.",
+    links: [
+      { href: "https://x.com/gregisenberg/status/2101284640828915995", label: "Source" },
+    ],
+  },
+  {
+    id: "uc-13",
+    group: "operations",
+    title: "Relevance ranking",
+    writeup:
+      "Score how well each candidate matches the user's context and combine the scores with your own ranking rules.",
+    links: [{ href: "https://jevai.dev/", label: "jevai.dev" }],
+  },
+  {
+    id: "uc-14",
+    group: "operations",
+    title: "Candidate scoring",
+    writeup:
+      "Split one broad question into separate scores, such as Python depth, leadership and system design, then weight them in code. Reweight any time without changing the prompt.",
+    links: [
+      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
+    ],
+  },
+  {
+    id: "uc-15",
+    group: "operations",
+    title: "Retrieval filtering",
+    writeup:
+      "Retrieve widely, then judge each passage for relevance before it reaches an expensive context window.",
+    links: [
+      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
+    ],
+  },
+  {
+    id: "uc-16",
+    group: "operations",
+    title: "Bulk document classification",
+    writeup:
+      "One demo classified about a thousand research papers for eight cents, against four dollars to summarise them with a generative model.",
+    links: [
+      { href: "https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e", label: "Practical guide" },
+    ],
+  },
 ];
-
-export const TRANCHE_META = {
-  games: {
-    id: "games",
-    title: "Games first",
-    badge: "P0",
-    blurb:
-      "The clearest testbed for JevBench: fast decisions with a measurable win or loss. Good for judging confidence, speed under pressure, and choices with many options.",
-  },
-  platform: {
-    id: "platform",
-    title: "Platform patterns",
-    badge: "P1",
-    blurb:
-      "Where Jev sits in front of a larger AI system — routing requests and narrowing choices before a bigger model gets involved.",
-  },
-  product: {
-    id: "product",
-    title: "Product patterns",
-    badge: "P1",
-    blurb:
-      "LLMs generate possibilities. Jev chooses what happens next. Product-shaped scenarios like self-healing tool calls, branch pruning, incident response, and marketplace dispatch — plus safety gates for irreversible actions and low-confidence cases.",
-  },
-  nongame: {
-    id: "nongame",
-    title: "Non-game later",
-    badge: "P2",
-    blurb:
-      "Support, search, safety, and bulk-classification use cases are valid too — just not the first thing we're benchmarking.",
-  },
-};
-
-/** Short labels for leaderboard filter + table cells. */
-export function shortLabel(uc) {
-  const shorts = {
-    "uc-17": "DOOM bot",
-    "uc-18": "Wikiracing",
-    "uc-19": "Browser agent",
-    "uc-20": "RTS / emulator / drone",
-    "uc-6": "Cascade routing",
-    "uc-10": "Tool unfurl",
-    "uc-1": "Ticket routing",
-    "uc-2": "Urgency gate",
-    "uc-3": "Frustration score",
-    "uc-4": "Fan-out triage",
-    "uc-5": "Confidence HITL",
-    "uc-7": "Tool / model pick",
-    "uc-8": "Contradiction check",
-    "uc-9": "Silence decision",
-    "uc-11": "Trust & safety",
-    "uc-12": "Judge LLM output",
-    "uc-13": "Relevance ranking",
-    "uc-14": "Resume scoring",
-    "uc-15": "RAG passage filter",
-    "uc-16": "Bulk classify",
-    "uc-g1": "Spend firewall",
-    "uc-g2": "Self-healing tools",
-    "uc-g3": "Irreversible detector",
-    "uc-g4": "Dynamic permissions",
-    "uc-g5": "Branch pruning",
-    "uc-g6": "Incident controller",
-    "uc-g7": "Negotiation policy",
-    "uc-g8": "Refund desk",
-    "uc-g9": "Marketplace dispatch",
-    "uc-g10": "Confidence queues",
-  };
-  return shorts[uc.id] || `#${uc.num}`;
-}

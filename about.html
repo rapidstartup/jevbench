@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href="https://jevbench.dev/about" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05070a" />
+    <meta name="description" content="What JevBench measures, how a win is verified, and how to run the open-source harness yourself. Plus support, sponsorship and contact." />
+    <meta property="og:title" content="About — JevBench" />
+    <meta property="og:description" content="What JevBench measures, how a win is verified, and how to run the open-source harness yourself." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jevbench.dev/about" />
+    <meta property="og:image" content="https://jevbench.dev/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lifeonautosite" />
+    <meta name="twitter:title" content="About — JevBench" />
+    <meta name="twitter:description" content="What JevBench measures, how a win is verified, and how to run the open-source harness yourself." />
+    <meta name="twitter:image" content="https://jevbench.dev/og.png" />
+    <title>About — JevBench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+<!--@include header-->
+
+    <main id="main">
+      <section class="shell page-head">
+        <p class="label rise">About</p>
+        <h1 class="display rise" style="--i: 1">A benchmark you can <em>watch.</em></h1>
+        <p class="lede rise" style="--i: 2">
+          JevBench measures decision models by putting them in charge of a real game. The result is a win or a
+          loss, and the footage is there to check.
+        </p>
+      </section>
+
+      <div class="shell">
+        <section class="about-section reveal" id="what" aria-labelledby="what-title">
+          <header>
+            <p class="label">01 · What we measure</p>
+            <h2 id="what-title">Decisions, <em>not answers.</em></h2>
+          </header>
+          <div class="about-body prose">
+            <p>
+              Most benchmarks grade a model on a single typed answer. JevBench grades it on what happens when it
+              has to act: hundreds of decisions in a row, under time pressure, with a clear outcome at the end.
+            </p>
+            <p>
+              <strong>Jev</strong> is a decision model. Instead of writing a reply, it picks one option from a set
+              and reports how confident it is. JevBench ranks Jev alongside open and self-hosted alternatives, and
+              setups that pair a decision model with a guide LLM.
+            </p>
+            <p>
+              Games come first because they are hard to fake. The next benchmarks cover product decisions such as
+              recovering from failed tool calls and responding to incidents. See the
+              <a href="/#roadmap">roadmap</a>.
+            </p>
+          </div>
+        </section>
+
+        <section class="about-section reveal" id="method" aria-labelledby="method-title">
+          <header>
+            <p class="label">02 · Method</p>
+            <h2 id="method-title">How a run <em>is scored.</em></h2>
+          </header>
+          <div class="about-body">
+            <ol class="rule-list">
+              <li>
+                <span>01</span>
+                <div>
+                  <strong>The model plays live</strong>
+                  <p>The game's state is read as structured data and the model chooses each move from the legal options.</p>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <strong>The game confirms the win</strong>
+                  <p>
+                    StarCraft II: the enemy headquarters is destroyed or critically damaged with Raynor alive, or a
+                    person confirms the victory screen. Minecraft: the Ender Dragon is defeated and the exit portal
+                    reached.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <strong>Every run is published</strong>
+                  <p>Wins and losses both go on the record, with decisions made, cost and the reason a run ended.</p>
+                </div>
+              </li>
+              <li>
+                <span>04</span>
+                <div>
+                  <strong>Evidence is attached</strong>
+                  <p>Stills and video come from the game window only, and are reviewed before they are published.</p>
+                </div>
+              </li>
+              <li>
+                <span>05</span>
+                <div>
+                  <strong>Speed and price are sourced</strong>
+                  <p>
+                    Latency is measured during runs unless marked as vendor-reported. Prices come from each
+                    provider's published rates:
+                    <a class="inline-link" href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener">TypeSafe</a>,
+                    <a class="inline-link" href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener">Google</a>,
+                    <a class="inline-link" href="https://github.com/mizorewww/laya-mlx/blob/main/BENCHMARKS.md" target="_blank" rel="noopener">Laya-MLX</a>.
+                  </p>
+                </div>
+              </li>
+            </ol>
+            <div class="action-row">
+              <a class="btn btn-bracket" href="/leaderboard">View the leaderboard</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="about-section reveal" id="open-source" aria-labelledby="open-source-title">
+          <header>
+            <p class="label">03 · Open source</p>
+            <h2 id="open-source-title">Run it <em>yourself.</em></h2>
+          </header>
+          <div class="about-body">
+            <p class="prose">
+              The StarCraft II harness is open source. Clone it, point it at a model and reproduce any result on
+              the board.
+            </p>
+            <div class="code-block-wrap">
+              <div class="code-block-bar">
+                <span class="label">Terminal</span>
+                <button
+                  type="button"
+                  class="copy-btn"
+                  data-copy="git clone https://github.com/rapidstartup/jev-plays-starcraft-2
+cd jev-plays-starcraft-2"
+                >Copy</button>
+              </div>
+              <pre class="code-block"><code><span class="c-dim">$</span> git clone https://github.com/rapidstartup/jev-plays-starcraft-2
+<span class="c-dim">$</span> cd jev-plays-starcraft-2
+<span class="c-dim"># setup and run commands are in the README</span></code></pre>
+            </div>
+            <div class="action-row">
+              <a class="btn btn-bracket" href="https://github.com/rapidstartup/jev-plays-starcraft-2" target="_blank" rel="noopener">Open on GitHub</a>
+              <span class="tag tag-soon">Run downloads coming soon</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="about-section reveal" id="support" aria-labelledby="support-title">
+          <header>
+            <p class="label">04 · Support</p>
+            <h2 id="support-title">Questions, <em>answered.</em></h2>
+          </header>
+          <div class="about-body">
+            <p class="prose">Ask about the harness, how a run was scored, or getting a model onto the board.</p>
+            <div class="action-row">
+              <a
+                class="btn btn-bracket"
+                href="https://vibedash.app/embed/feedback/f2868665-6d44-43e5-b6f0-7036af020709"
+                target="_blank"
+                rel="noopener"
+              >Get help</a>
+              <a class="text-link" href="https://x.com/lifeonautosite" target="_blank" rel="noopener">Message on X →</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="about-section reveal" id="sponsor" aria-labelledby="sponsor-title">
+          <header>
+            <p class="label">05 · Sponsor</p>
+            <h2 id="sponsor-title">Keep the board <em>open.</em></h2>
+          </header>
+          <div class="about-body">
+            <p class="prose">
+              Every run costs compute and API credits. Sponsorship keeps the results public and the harness free.
+              Organisations can also sponsor runs directly with API or compute credits.
+            </p>
+            <div class="action-row">
+              <a class="btn btn-solid" href="https://paypal.me/rapidexecutive" target="_blank" rel="noopener">PayPal</a>
+              <a class="btn btn-bracket" href="https://buymeacoffee.com/logansanoh8" target="_blank" rel="noopener">Buy me a coffee</a>
+              <a class="text-link" href="#contact">Sponsor with credits →</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="about-section reveal" id="contact" aria-labelledby="contact-title">
+          <header>
+            <p class="label">06 · Contact</p>
+            <h2 id="contact-title">Get <em>in touch.</em></h2>
+          </header>
+          <div class="about-body">
+            <form id="contact-form" class="contact-form" action="mailto:hello@jevbench.dev" method="get" enctype="text/plain">
+              <label>
+                <span class="label">Name</span>
+                <input type="text" name="name" autocomplete="name" />
+              </label>
+              <label>
+                <span class="label">Email</span>
+                <input type="email" name="email" autocomplete="email" required />
+              </label>
+              <label class="span-2">
+                <span class="label">Message</span>
+                <textarea name="body" rows="4" required></textarea>
+              </label>
+              <div class="action-row span-2">
+                <button type="submit" class="btn btn-bracket">Send message</button>
+                <p class="form-note">Opens in your email app.</p>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+
+<!--@include footer-->
+
+    <script type="module" src="/src/about.js"></script>
+  </body>
+</html>

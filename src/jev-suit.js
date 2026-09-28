@@ -152,7 +152,7 @@ function renderResult(root, data) {
       <pre class="code-block jev-suit-prompt-pre" data-prompt-preview></pre>
     </div>
     <p class="muted small">Assembled automatically from your answers — no API keys leave the server.</p>
-    <button type="button" class="btn btn-ghost jev-suit-restart" data-jev-suit-restart>Start over</button>
+    <button type="button" class="btn btn-bracket jev-suit-restart" data-jev-suit-restart>Start over</button>
   `;
 
   const pre = result.querySelector("[data-prompt-preview]");
@@ -248,7 +248,7 @@ async function submitAnswer(root, answers, question, value, noteVal) {
     errEl.hidden = false;
     errEl.textContent = e.message || "Something went wrong.";
     root.querySelector("[data-jev-suit-controls]").innerHTML =
-      `<button type="button" class="btn btn-primary" data-jev-suit-retry>Retry</button>`;
+      `<button type="button" class="btn btn-solid" data-jev-suit-retry>Retry</button>`;
     const retry = root.querySelector("[data-jev-suit-retry]");
     retry.addEventListener("click", () => {
       submitAnswer(root, answers, question, value, noteVal);
@@ -284,7 +284,7 @@ async function startFlow(root) {
   } catch (e) {
     errEl.hidden = false;
     errEl.textContent = e.message || "Could not start.";
-    controls.innerHTML = `<button type="button" class="btn btn-primary" data-jev-suit-retry-start>Try again</button>`;
+    controls.innerHTML = `<button type="button" class="btn btn-solid" data-jev-suit-retry-start>Try again</button>`;
     const retry = root.querySelector("[data-jev-suit-retry-start]");
     retry.addEventListener("click", () => {
       startFlow(root);

@@ -2,416 +2,200 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Links to the old single-page sections land on their new pages.
+      (function () {
+        var moved = {
+          "#leaderboard": "/leaderboard",
+          "#use-cases": "/use-cases",
+          "#jev-suit": "/use-cases#fit-check",
+          "#open-source": "/about#open-source",
+          "#about": "/about",
+          "#support": "/about#support",
+          "#sponsor": "/about#sponsor",
+        };
+        var hash = location.hash;
+        if (moved[hash]) location.replace(moved[hash]);
+        else if (/^#uc-/.test(hash)) location.replace("/use-cases" + hash);
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="canonical" href="https://jevbench.dev/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a0b0f" />
-    <meta name="description" content="JevBench measures Jev and open alternatives on interactive harnesses — fast structured decisions for agents that act. Starting with StarCraft II, expanding to product loops. Reproducible runs. Open source." />
-    <meta property="og:title" content="JevBench — Decision models for live agents" />
-    <meta property="og:description" content="Bench Jev and open alternatives on interactive harnesses. Fast structured probabilistic decisions from app state. SC2 first, then product loops. Reproducible runs. Open source." />
+    <meta name="theme-color" content="#05070a" />
+    <meta name="description" content="JevBench ranks decision models by the games they win. {{wins}} verified wins across {{runs}} published runs in StarCraft II and Minecraft. Open source." />
+    <meta property="og:title" content="JevBench — The leaderboard for decision models" />
+    <meta property="og:description" content="Decision models ranked by verified wins in real games. {{wins}} wins across {{runs}} published runs. Open source." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://jevbench.dev/" />
     <meta property="og:image" content="https://jevbench.dev/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lifeonautosite" />
-    <meta name="twitter:title" content="JevBench — Decision models for live agents" />
-    <meta name="twitter:description" content="Bench Jev and open alternatives on interactive harnesses. Fast structured probabilistic decisions from app state. SC2 first, then product loops. Reproducible runs. Open source." />
+    <meta name="twitter:title" content="JevBench — The leaderboard for decision models" />
+    <meta name="twitter:description" content="Decision models ranked by verified wins in real games. {{wins}} wins across {{runs}} published runs. Open source." />
     <meta name="twitter:image" content="https://jevbench.dev/og.png" />
-    <title>JevBench — Decision models for live agents</title>
+    <title>JevBench — The leaderboard for decision models</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-    <div class="bg-grid" aria-hidden="true"></div>
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="logo" href="#home">
-          <span class="logo-mark" aria-hidden="true">
-            <img class="logo-anim" src="/logo-j.gif" alt="" width="32" height="32" />
-            <img class="logo-still" src="/logo-j.png" alt="" width="32" height="32" />
-          </span>
-          <span class="logo-text">JevBench</span>
-        </a>
-        <nav class="nav" aria-label="Main">
-          <a href="/">Home</a>
-          <a href="/leaderboard">Leaderboard</a>
-          <a href="#use-cases">Use cases</a>
-          <a href="#open-source">Open source</a>
-          <a href="#about">About</a>
-          <a href="#support">Support</a>
-          <a href="#sponsor" class="nav-cta">Sponsor</a>
-        </nav>
-        <div class="header-actions">
-          <a href="#sponsor" class="nav-cta">Sponsor</a>
-          <button
-            class="nav-toggle"
-            type="button"
-            aria-label="Open menu"
-            aria-expanded="false"
-            aria-controls="mobile-nav"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <button class="nav-scrim" type="button" data-nav-close hidden aria-label="Close menu"></button>
-    <nav id="mobile-nav" class="mobile-nav" aria-label="Main" aria-hidden="true">
-      <a href="/">Home</a>
-      <a href="/leaderboard">Leaderboard</a>
-      <a href="#use-cases">Use cases</a>
-      <a href="#open-source">Open source</a>
-      <a href="#about">About</a>
-      <a href="#support">Support</a>
-      <a href="#sponsor" class="btn btn-primary nav-drawer-cta">Sponsor</a>
-    </nav>
+<!--@include header-->
 
     <main id="main">
-      <section id="home" class="section hero">
-        <div class="container hero-grid">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="shell hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">jevbench.dev · v1 preview</p>
-            <h1>Typed decisions for agents that act.<br /><span class="accent">Bench Jev and the open alternatives.</span></h1>
-            <p class="lede">
-              Jev is a fast structured probabilistic decision model — pick actions from app state, not chat replies.
-              This site measures Jev, Jev-compatible copycats, and dual-brain (guide LLM + Jev) setups on interactive
-              harnesses, starting with StarCraft&nbsp;II and expanding to product loops. Reproducible runs. Open source.
-              No win claims we don’t have.
+            <p class="numeral rise" data-count="{{topRate}}" aria-label="{{topRate}} percent">{{topRate}}<span class="numeral-unit">%</span></p>
+            <p class="label rule-label rise" style="--i: 1">Win rate to beat · #1 · {{topModel}}</p>
+            <h1 id="hero-title" class="statement rise" style="--i: 2">Decision models, ranked by <em>the games they win.</em></h1>
+            <p class="lede rise" style="--i: 3">
+              JevBench drops Jev and its open alternatives into real games and counts only verified wins.
+              {{wins}} so far, across {{runs}} published runs.
             </p>
-            <div class="hero-actions">
-              <a class="btn btn-primary" href="/leaderboard">View leaderboard</a>
-              <a class="btn btn-ghost" href="https://github.com/rapidstartup/jev-plays-starcraft-2" target="_blank" rel="noopener">GitHub →</a>
+            <div class="hero-actions rise" style="--i: 4">
+              <a class="btn btn-bracket btn-lg" href="/leaderboard">View the leaderboard</a>
+              <a class="text-link" href="/about#method">How runs are scored →</a>
             </div>
           </div>
-          <aside class="card status-card" aria-label="Bench status">
-            <p class="eyebrow">Bench status</p>
-            <dl class="status-list">
-              <dt>Harness</dt>
-              <dd>v0.1</dd>
-              <dt>SC2 runs</dt>
-              <dd>78 scored · 14 verified wins</dd>
-              <dt>Games</dt>
-              <dd>1 (StarCraft II)</dd>
-              <dt>Evidence</dt>
-              <dd>Harness packets · R2 media empty</dd>
-              <dt>Jev 1.13 cost in</dt>
-              <dd>$0.042/MTok</dd>
-              <dt>Jev 1.13 speed</dt>
-              <dd>70–500 ms</dd>
-              <dt>Licence</dt>
-              <dd>Open source</dd>
-            </dl>
+
+          <aside class="standings-panel" aria-labelledby="hero-board-title">
+            <header class="panel-head">
+              <h2 id="hero-board-title" class="label"><b>Standings</b> · StarCraft II</h2>
+              <span class="label">Liberation Day</span>
+            </header>
+            <div class="mini-board" id="hero-board">
+              <!-- filled by main.js -->
+            </div>
+            <footer class="panel-foot">
+              <span class="label"><span class="pulse" aria-hidden="true"></span>&nbsp; Updated {{updated}}</span>
+              <a class="text-link" href="/leaderboard">Full leaderboard →</a>
+            </footer>
           </aside>
         </div>
       </section>
 
-      <section id="leaderboard" class="section">
-        <div class="container-wide">
-          <div class="section-head">
-            <h2>Leaderboard preview</h2>
-            <p class="muted">Top results across Jev models and gaming harnesses — measured and official-cited.</p>
-          </div>
+      <div class="ticker" id="ticker" aria-label="Latest verified wins">
+        <!-- filled by main.js -->
+      </div>
 
-          <div class="table-wrap" tabindex="0" role="region" aria-label="Leaderboard summary">
-            <table class="lb-table lb-table-summary" id="lb-table-summary">
-              <caption class="table-caption">
-                Early results — measured smokes and harness runs. Official-cited rows are labeled.
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Agent / model</th>
-                  <th scope="col">Use case</th>
-                  <th scope="col">Category</th>
-                  <th scope="col">Score</th>
-                  <th scope="col">Cost in</th>
-                </tr>
-              </thead>
-              <tbody id="lb-body-summary">
-                <!-- filled by main.js -->
-              </tbody>
-            </table>
+      <section id="arenas" class="sheet" aria-labelledby="arenas-title">
+        <div class="shell">
+          <div class="sheet-head label reveal">
+            <span>01</span>
+            <span>Arenas</span>
+            <span><span class="pulse" aria-hidden="true"></span> {{games}} live</span>
+            <span>Sheet 01 / 04</span>
           </div>
-          <div class="lb-cta-wrap">
-            <a class="btn btn-primary btn-lg" href="/leaderboard">View full leaderboard</a>
-          </div>
-          <p class="bench-status">Harness v0.1 · 78 scored SC2 runs · 14 verified Liberation Day wins · 1 game (StarCraft II) · updated 22 Sep 2026</p>
-        </div>
-      </section>
-
-
-      <section id="use-cases" class="section alt">
-        <div class="container">
-          <div class="section-head">
-            <h2>Use cases</h2>
-            <p class="muted">
-              Where a fast in-loop decision beats a chat reply — decision models on harnesses, games first, then product workflows.
-              Numbers on individual cards are illustrative, not certified JevBench scores.
-            </p>
-          </div>
-          <article id="jev-suit" class="card jev-suit-cta-card" aria-labelledby="jev-suit-title">
-            <div class="jev-suit-cta">
-              <div class="jev-suit-cta-copy">
-                <p class="eyebrow">Interactive</p>
-                <h3 id="jev-suit-title">Check if Jev suits your use case</h3>
-                <p class="muted">
-                  Answer four short questions and get a plain-language fit summary,
-                  plus a ready-to-paste prompt for your coding tool
-                  (Cursor, OpenCode, Claude Code, and similar).
-                </p>
-              </div>
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-jev-suit-begin
-                title="Open suitability check"
-                aria-label="Open suitability check"
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <path d="M10 2.75l1.15 3.85 3.85 1.15-3.85 1.15L10 12.75l-1.15-3.85L5 7.75l3.85-1.15L10 2.75z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" />
-                  <path d="M15.35 12.4l.5 1.65 1.65.5-1.65.5-.5 1.65-.5-1.65-1.65-.5 1.65-.5.5-1.65z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
-                </svg>
-                Open suitability check
-              </button>
+          <div class="sheet-intro reveal">
+            <div>
+              <h2 id="arenas-title" class="statement">Two arenas. One question. <em>Did it win?</em></h2>
+              <span class="statement-underline" aria-hidden="true"></span>
             </div>
-          </article>
-
-          <div id="use-cases-root" class="use-cases-root">
+            <dl class="spec">
+              <div><dt>Scored on</dt><dd>Verified outcomes</dd></div>
+              <div><dt>Published</dt><dd>Every run, win or lose</dd></div>
+              <div><dt>Evidence</dt><dd>Stills and full-run video</dd></div>
+            </dl>
+          </div>
+          <div class="arena-grid" id="arena-grid">
             <!-- filled by main.js -->
           </div>
-          <p class="muted small uc-pack-note">
-            Sources:
-            <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener">TypeSafe blog</a>,
-            <a href="https://jevai.dev/" target="_blank" rel="noopener">jevai.dev</a>,
-            <a href="https://dev.to/valyuai/how-to-use-jev-a-practical-guide-to-typesafes-system-one-model-g5e" target="_blank" rel="noopener">practical guide</a>,
-            and the individual links on each card above.
-          </p>
         </div>
       </section>
 
-      <section id="open-source" class="section">
-        <div class="container">
-          <div class="section-head">
-            <h2>Open source</h2>
-            <p class="muted">Run the harness yourself. Fork clean — never commit keys or tokens.</p>
+      <section id="records" class="sheet" aria-labelledby="records-title">
+        <div class="shell">
+          <div class="sheet-head label reveal">
+            <span>02</span>
+            <span>Records</span>
+            <span>{{decisions}} decisions scored</span>
+            <span>Sheet 02 / 04</span>
           </div>
-          <div class="cards">
-            <article class="card">
-              <h3>Install &amp; run</h3>
-              <p>Clone the StarCraft&nbsp;II agent harness and follow the repo README for local setup.</p>
-              <div class="code-block-wrap">
-                <button type="button" class="copy-btn" data-copy="git clone https://github.com/rapidstartup/jev-plays-starcraft-2
-cd jev-plays-starcraft-2
-# see README for deps, SC2, and eval commands">Copy</button>
-                <pre class="code-block"><code>git clone https://github.com/rapidstartup/jev-plays-starcraft-2
-cd jev-plays-starcraft-2
-# see README for deps, SC2, and eval commands</code></pre>
-              </div>
-              <a class="btn btn-ghost" href="https://github.com/rapidstartup/jev-plays-starcraft-2" target="_blank" rel="noopener">Open repo →</a>
-            </article>
-            <article class="card">
-              <h3>Downloads</h3>
-              <p>No releases published yet. Packaged builds, sample replays, and scored run artifacts will land here.</p>
-            </article>
-            <article class="card">
-              <h3>Fork hygiene</h3>
-              <ul class="checklist">
-                <li>No API keys, tokens, or <code>.env</code> in git</li>
-                <li>Use local secrets / CI secrets only</li>
-                <li>Strip credentials before opening a PR</li>
-                <li>Prefer public model IDs over private endpoints in issues</li>
-              </ul>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="about" class="section alt">
-        <div class="container">
-          <div class="section-head">
-            <h2>About</h2>
-            <p class="muted">What JevBench measures and where we’re going.</p>
-          </div>
-          <div class="about-grid">
-            <div class="about-copy">
-              <h3>What JevBench measures</h3>
-              <p>
-                JevBench is a decision-model bench: we measure Jev and open alternatives on interactive harnesses —
-                win/loss, task completion, latency, and (soon) video evidence — not a single typed answer.
-                Games are the first harness surface; product loops come next.
-              </p>
-              <h3>Harness surface — StarCraft&nbsp;II first</h3>
-              <p>
-                Interactive games are a harsh, observable testbed: partial observability, long horizons,
-                and clear win/loss. We’re starting with StarCraft&nbsp;II and related RTS / planning tasks
-                where agents must act under time pressure. See the full
-                <a href="#use-cases">list of use cases</a> (including Doom, Wikiracing, browser use, Mario/StarCraft/drone).
-              </p>
-              <h3>Games roadmap — planned / PARKED</h3>
-              <p>
-                <strong>Fortnite</strong> (Creative-only adapter plan) and <strong>Minecraft</strong>
-                (Mineflayer / Mindcraft-class structured adapter plan) are on the roadmap as
-                <strong>PARKED</strong> — planning docs only; no live scored runs, videos, or leaderboard
-                rows yet. Live game count remains StarCraft&nbsp;II until a harness smoke ships.
-              </p>
-              <h3>Non-game — later</h3>
-              <p>
-                The same patterns will expand to non-game workflows (support routing, retrieval judging,
-                trust &amp; safety). Leaderboard filters already cover every use case plus a game / non-game category.
-              </p>
-              <h3>Video evidence</h3>
-              <p>
-                Scored runs will ship with video / replay evidence stored on Cloudflare R2.
-                Clips will link from each leaderboard row once live scoring is online.
-              </p>
+          <div class="sheet-intro reveal">
+            <div>
+              <h2 id="records-title" class="statement">The best of the board, <em>so far.</em></h2>
+              <span class="statement-underline" aria-hidden="true"></span>
             </div>
-            <aside class="aside-card">
-              <p class="eyebrow">Brand note</p>
-              <p>
-                <strong>JevBench</strong> (jevbench.dev) benches decision models for live agents — Jev,
-                copycats, and dual-brain setups — on interactive harnesses. SC2 is the first surface.
-              </p>
-              <p class="muted small">
-                Other Jev-focused text-decision benchmarks exist elsewhere on the web; this site doesn’t use or
-                publish their scores unless labeled official-cited.
-              </p>
-            </aside>
-          </div>
-        </div>
-      </section>
-
-      <section id="support" class="section">
-        <div class="container">
-          <div class="section-head">
-            <h2>Support</h2>
-            <p class="muted">Questions about the harness, scoring, or submitting a run.</p>
-          </div>
-          <div class="support-slot" id="vd-support-slot">
-            <p class="support-note">
-              Use Get help below, or the chat widget once it loads.
+            <p class="lede">
+              Every record links to the run behind it. When a model beats one, the board updates.
             </p>
-            <a
-              class="btn btn-primary"
-              href="https://vibedash.app/embed/feedback/f2868665-6d44-43e5-b6f0-7036af020709"
-              target="_blank"
-              rel="noopener"
-            >Get help</a>
+          </div>
+          <div class="record-grid reveal" id="record-grid">
+            <!-- filled by main.js -->
           </div>
         </div>
       </section>
 
-      <section id="sponsor" class="section alt">
-        <div class="container">
-          <div class="section-head">
-            <h2>Sponsor &amp; contact</h2>
-            <p class="muted">Keep the bench open. Orgs can gift tokens — details coming.</p>
+      <section id="method" class="sheet" aria-labelledby="method-title">
+        <div class="shell">
+          <div class="sheet-head label reveal">
+            <span>03</span>
+            <span>Method</span>
+            <span>Open source</span>
+            <span>Sheet 03 / 04</span>
           </div>
-          <div class="cards two">
-            <article class="card">
-              <h3>Sponsor me</h3>
-              <p>
-                Support JevBench so the public runs stay open. PayPal and Buy Me a Coffee are live; crypto and org token-gift flows still coming.
-              </p>
-              <div class="sponsor-links">
-                <a class="btn btn-primary" href="https://paypal.me/rapidexecutive" target="_blank" rel="noopener">PayPal</a>
-                <a class="btn btn-primary" href="https://buymeacoffee.com/logansanoh8" target="_blank" rel="noopener">Buy me a coffee</a>
-                <a class="btn btn-ghost" href="https://x.com/lifeonautosite" target="_blank" rel="noopener">Reach out on X →</a>
-              </div>
-              <p class="muted small">
-                Organizations can gift API / compute tokens to power public runs. Get in touch to discuss compute sponsorship. Crypto link coming.
-              </p>
-            </article>
-            <article class="card">
-              <h3>Contact</h3>
-              <form id="contact-form" class="contact-form" action="mailto:hello@jevbench.dev" method="get" enctype="text/plain">
-                <label>
-                  Name
-                  <input type="text" name="name" placeholder="Your name" autocomplete="name" />
-                </label>
-                <label>
-                  Email
-                  <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
-                </label>
-                <label>
-                  Message
-                  <textarea name="body" rows="4" placeholder="How can we help?" required></textarea>
-                </label>
-                <button type="submit" class="btn btn-ghost">Send message</button>
-                <p class="muted small">Opens your email client. A hosted form is coming.</p>
-              </form>
-            </article>
+          <div class="sheet-intro reveal">
+            <div>
+              <h2 id="method-title" class="statement">A win only counts <em>when the game says so.</em></h2>
+              <span class="statement-underline" aria-hidden="true"></span>
+            </div>
+            <p class="lede">
+              No self-reported scores. Each run is played live and checked against the game's own objective.
+              <a class="inline-link" href="/about#method">Read the full method</a>.
+            </p>
+          </div>
+          <ol class="steps reveal">
+            <li class="step">
+              <h3>The game shares its state</h3>
+              <p>Units, positions and objectives are read from the live game and turned into a list of legal moves.</p>
+            </li>
+            <li class="step">
+              <h3>The model makes the call</h3>
+              <p>The decision model picks one move from the list. No chat and no free text, only a decision.</p>
+            </li>
+            <li class="step">
+              <h3>The outcome is verified</h3>
+              <p>The run is scored against the game's objective, then published with its evidence, win or lose.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="roadmap" class="sheet" aria-labelledby="roadmap-title">
+        <div class="shell">
+          <div class="sheet-head label reveal">
+            <span>04</span>
+            <span>Roadmap</span>
+            <span>{{queued}} models queued</span>
+            <span>Sheet 04 / 04</span>
+          </div>
+          <div class="sheet-intro reveal">
+            <div>
+              <h2 id="roadmap-title" class="statement">The board is <em>just getting started.</em></h2>
+              <span class="statement-underline" aria-hidden="true"></span>
+            </div>
+            <p class="lede">More models, more arenas, and benchmarks beyond games.</p>
+          </div>
+          <div class="phases" id="phases">
+            <!-- filled by main.js -->
+          </div>
+        </div>
+      </section>
+
+      <section class="closing" aria-labelledby="closing-title">
+        <div class="shell reveal">
+          <p class="numeral" data-count="{{wins}}">{{wins}}</p>
+          <p class="label">Verified wins · {{models}} models ranked · {{games}} games</p>
+          <h2 id="closing-title" class="statement">The board is live. <em>See who's winning.</em></h2>
+          <div class="hero-actions">
+            <a class="btn btn-bracket btn-lg" href="/leaderboard">View the leaderboard</a>
+            <a class="text-link" href="/about#open-source">Run the harness yourself →</a>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <div class="footer-brand">
-          <div class="footer-brand-lockup">
-            <span class="logo-mark" aria-hidden="true">
-              <img class="logo-anim" src="/logo-j.gif" alt="" width="32" height="32" />
-              <img class="logo-still" src="/logo-j.png" alt="" width="32" height="32" />
-            </span>
-            <span class="logo-text">JevBench</span>
-          </div>
-          <p class="footer-desc">Decision models for live agents. Open harnesses.</p>
-        </div>
-        <nav class="footer-col" aria-label="Project">
-          <h2>Project</h2>
-          <a href="/leaderboard">Leaderboard</a>
-          <a href="/#use-cases">Use cases</a>
-          <a href="/#open-source">Open source</a>
-          <a href="/#about">About</a>
-          <a href="/#open-source">Downloads</a>
-        </nav>
-        <nav class="footer-col" aria-label="Community">
-          <h2>Community</h2>
-          <a href="https://github.com/rapidstartup/jev-plays-starcraft-2" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://x.com/lifeonautosite" target="_blank" rel="noopener">X / @lifeonautosite</a>
-          <a href="#support">Support</a>
-          <a href="#sponsor">Sponsor</a>
-        </nav>
-      </div>
-      <div class="container footer-legal">
-        <p>© 2026 JevBench · jevbench.dev · Early measured results; no fabricated win rates.</p>
-      </div>
-    </footer>
-
-    <dialog id="jev-suit-dialog" class="jev-suit-dialog" aria-labelledby="jev-suit-dialog-title">
-      <div class="jev-suit-dialog-panel">
-        <header class="jev-suit-dialog-head">
-          <div class="jev-suit-dialog-titles">
-            <p class="eyebrow">Interactive</p>
-            <h3 id="jev-suit-dialog-title">Would Jev suit your use case?</h3>
-          </div>
-          <button
-            type="button"
-            class="jev-suit-icon-btn"
-            data-jev-suit-close
-            data-keep-enabled="1"
-            title="Close"
-            aria-label="Close"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
-            </svg>
-          </button>
-        </header>
-        <div class="jev-suit-chat" data-jev-suit-chat>
-          <div class="jev-suit-progress muted small" data-jev-suit-progress></div>
-          <div class="jev-suit-log" data-jev-suit-log role="log" aria-live="polite"></div>
-          <div class="jev-suit-controls" data-jev-suit-controls></div>
-          <p class="jev-suit-error" data-jev-suit-error hidden role="alert"></p>
-          <div class="jev-suit-result" data-jev-suit-result hidden></div>
-          <p class="visually-hidden" data-jev-suit-copy-status aria-live="polite"></p>
-        </div>
-      </div>
-    </dialog>
+<!--@include footer-->
 
     <script type="module" src="/src/main.js"></script>
   </body>

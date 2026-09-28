@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href="https://jevbench.dev/use-cases" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05070a" />
+    <meta name="description" content="Where a decision model beats a chat reply: 30 patterns across games, agent infrastructure, safety gates and operations. Check whether Jev fits your product in four questions." />
+    <meta property="og:title" content="Use cases — JevBench" />
+    <meta property="og:description" content="Where a decision model beats a chat reply. 30 patterns, plus a four-question fit check for your own product." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jevbench.dev/use-cases" />
+    <meta property="og:image" content="https://jevbench.dev/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lifeonautosite" />
+    <meta name="twitter:title" content="Use cases — JevBench" />
+    <meta name="twitter:description" content="Where a decision model beats a chat reply. 30 patterns, plus a four-question fit check for your own product." />
+    <meta name="twitter:image" content="https://jevbench.dev/og.png" />
+    <title>Use cases — JevBench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+<!--@include header-->
+
+    <main id="main">
+      <section class="shell page-head">
+        <p class="label rise"><span id="uc-count"></span> patterns · 4 groups</p>
+        <h1 class="display rise" style="--i: 1">Where a decision <em>beats a reply.</em></h1>
+        <p class="lede rise" style="--i: 2">
+          A decision model picks one option from a known set and reports how confident it is. These are the places
+          that pays off.
+        </p>
+        <nav class="uc-nav rise" style="--i: 3" id="uc-nav" aria-label="Use case groups">
+          <!-- filled by use-cases-page.js -->
+        </nav>
+      </section>
+
+      <section class="shell" id="fit-check" aria-labelledby="fit-check-title">
+        <div class="fit-check reveal">
+          <div>
+            <p class="label label-signal">Fit check · 4 questions</p>
+            <h2 id="fit-check-title">Would Jev suit your product?</h2>
+            <p>
+              Answer four short questions for a plain-language summary and a ready-to-paste prompt for Cursor,
+              OpenCode or Claude Code.
+            </p>
+          </div>
+          <button type="button" class="btn btn-solid btn-lg" data-jev-suit-begin>Start the fit check</button>
+        </div>
+      </section>
+
+      <div class="shell" id="uc-groups">
+        <!-- filled by use-cases-page.js -->
+      </div>
+
+      <section class="shell section-block">
+        <p class="fine-print">
+          Figures on these cards are reported by the linked sources. JevBench results appear only on the
+          <a class="inline-link" href="/leaderboard">leaderboard</a>.
+        </p>
+      </section>
+    </main>
+
+<!--@include footer-->
+
+    <dialog id="jev-suit-dialog" class="jev-suit-dialog" aria-labelledby="jev-suit-dialog-title">
+      <div class="jev-suit-dialog-panel">
+        <header class="jev-suit-dialog-head">
+          <div>
+            <p class="label label-signal">Fit check</p>
+            <h3 id="jev-suit-dialog-title">Would Jev suit your product?</h3>
+          </div>
+          <button
+            type="button"
+            class="jev-suit-icon-btn"
+            data-jev-suit-close
+            data-keep-enabled="1"
+            title="Close"
+            aria-label="Close"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" />
+            </svg>
+          </button>
+        </header>
+        <div class="jev-suit-chat" data-jev-suit-chat>
+          <div class="jev-suit-progress" data-jev-suit-progress></div>
+          <div class="jev-suit-log" data-jev-suit-log role="log" aria-live="polite"></div>
+          <div class="jev-suit-controls" data-jev-suit-controls></div>
+          <p class="jev-suit-error" data-jev-suit-error hidden role="alert"></p>
+          <div class="jev-suit-result" data-jev-suit-result hidden></div>
+          <p class="visually-hidden" data-jev-suit-copy-status aria-live="polite"></p>
+        </div>
+      </div>
+    </dialog>
+
+    <script type="module" src="/src/use-cases-page.js"></script>
+  </body>
+</html>
