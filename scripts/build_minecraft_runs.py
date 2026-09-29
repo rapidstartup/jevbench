@@ -7,6 +7,7 @@ Read-only on the incoming tree. Mirrors scripts/build_sc2_runs.py.
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(r"C:\Users\natha\code\jev-plays-starcraft-2\runs\minecraft-incoming")
@@ -49,6 +50,22 @@ def note_text(summary: dict) -> str | None:
     return None
 
 
+def duration_sec(summary: dict, config: dict) -> int | None:
+    """Wall-clock run time from run creation to the recorded finish."""
+    started = config.get("createdAt")
+    finished = summary.get("finishedAt")
+    if not started or not finished:
+        return None
+    try:
+        # Trim to whole seconds: the two files carry different sub-second precision.
+        begin = datetime.fromisoformat(started[:19])
+        end = datetime.fromisoformat(finished[:19])
+    except ValueError:
+        return None
+    seconds = round((end - begin).total_seconds())
+    return seconds if seconds > 0 else None
+
+
 def media_for(run_dir: Path, run_id: str) -> dict:
     video = run_dir / "full-playthrough.mp4"
     stills = sorted(p.name for p in run_dir.glob("still-*.png"))
@@ -83,6 +100,7 @@ def main() -> None:
                 "seed": config.get("seed"),
                 "note": note_text(summary),
                 "milestones": summary.get("milestones") or None,
+                "durationSec": duration_sec(summary, config),
                 "media": media_for(run_dir, run_dir.name),
             }
         )

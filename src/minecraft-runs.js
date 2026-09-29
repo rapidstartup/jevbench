@@ -14,6 +14,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "Full pipeline success: prepare (3 chests, 8 beds, kit) -> portal -> nether -> exit portal -> End -> bed combat (dragon 200->0 via timed bed blasts) -> exit portal reached.",
     "milestones": null,
+    "durationSec": 3112,
     "media": {
       "hasVideo": true,
       "video": "/api/media/mc-NEW_RUN20-full-playthrough.mp4",
@@ -47,6 +48,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": null,
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -75,6 +77,7 @@ export const MC_RUNS = [
       "end_entered": true,
       "dragon_killed": false
     },
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -95,6 +98,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "Probe proved chunks loaded (nulls:0 nonNull:7021) but gather/stair/ascend matched:0; under/feet=water. Agent stuck swimming at y62 under village y71. Killed to deploy deeper scans + exit_water.",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -115,6 +119,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "Survived shell-timeout fix (WMI launch). scanNearby always returned empty at chest/village area (gather_scan targets:0). Always cycling route_high/stair_up/chest_*; never offered gather_climb/ascend_*/climb_column. Killed to deploy scan_probe diagnostics.",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -135,6 +140,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": null,
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -155,6 +161,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": null,
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -175,6 +182,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "bot.findBlocks returned empty on agent (palette/section matcher false-negative) so gather_climb_block, climb_column (no mats), and ascend_* never offered; digStairStep found no solid block; route_high cannot climb 9-block wall; inventory stayed empty",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -195,6 +203,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "Air gap y63-70 under chest; inventory empty; no solid stair within 5.5; route_high GoalXZ stays y62; no gather/pillar actions offered",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -215,6 +224,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "Two start-run invocations raced; agent stuck Waiting for native; mirror never up; force killed",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -235,6 +245,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "No solid diggable block within 5.5 reach at y61-71 near chest column (air gap under platform); Old stair only scanned fixed columns; village edge wall beyond scan; pathfinder GoalNear to y71 times out",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -255,6 +266,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "stair_up offered/selected but digStairStep targeted air blocks at y=63-64; reported success while y stayed ~62; ascend_targets never selected",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -275,6 +287,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "Reached xz under chest at y62; air gap y63-70; no climb candidates; only wait offered during chest cooldown",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -295,6 +308,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "Player reached chest base at y~62; chest at y=71 (9-block gap); Empty inventory: allow1by1towers cannot place scaffolding; pathfinder thinkTimeout=6000 expired before dig-ascent plan found; candidates() offered only chest_ and wait; no ascend recovery action; failureCooldown kept chest on 12s cooldown leaving only wait",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -315,6 +329,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": "Drowning guards held (health stayed 20). Path softening was not enough; further segment/exclusion fix applied for NEW_RUN7. EPIPE resilience added.",
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -335,6 +350,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": null,
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,
@@ -355,6 +371,7 @@ export const MC_RUNS = [
     "seed": "8398967436125155523",
     "note": null,
     "milestones": null,
+    "durationSec": null,
     "media": {
       "hasVideo": false,
       "video": null,

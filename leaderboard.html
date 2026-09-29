@@ -29,7 +29,8 @@
         <p class="label rise"><span class="pulse" aria-hidden="true"></span> Live · updated {{updated}}</p>
         <h1 class="display rise" style="--i: 1">Leader<em>board</em></h1>
         <p class="lede rise" style="--i: 2">
-          Decision models ranked by verified wins. Open any row to see every run behind the number.
+          Decision models ranked by verified wins, with measured speed and cost alongside. Open any row to see
+          every run behind the number.
         </p>
       </section>
 
@@ -64,6 +65,11 @@
         </aside>
 
         <div class="board">
+          <div class="board-tabs" id="view-switch" role="tablist" aria-label="Rank by">
+            <button type="button" role="tab" data-view="wins" aria-selected="true">Wins</button>
+            <button type="button" role="tab" data-view="speed" aria-selected="false">Speed</button>
+            <button type="button" role="tab" data-view="cost" aria-selected="false">Cost</button>
+          </div>
           <p class="prompt-line" id="prompt-line" aria-hidden="true"></p>
           <div class="board-controls">
             <div class="control">
@@ -117,8 +123,15 @@
           <article class="note">
             <h3>How models are ranked</h3>
             <p>
-              By verified wins first, then win rate. Average decisions and cost are taken across a model's wins, so
-              they show what a win takes.
+              By verified wins first, then win rate. Speed and cost have their own boards, and only rank models that
+              have won: a fast or cheap loss proves nothing.
+            </p>
+          </article>
+          <article class="note">
+            <h3>Small samples</h3>
+            <p>
+              A win rate from fewer than five runs is marked provisional. The band on each bar is the 95% range. The
+              wider it is, the less settled the number.
             </p>
           </article>
           <article class="note">

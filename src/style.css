@@ -845,6 +845,10 @@ a.mini-row:hover::before {
 .mini-row[data-rank="1"] .mini-rate {
   color: var(--signal);
 }
+.mini-row[data-provisional] .mini-rate {
+  font-weight: 500;
+  color: var(--ink-2);
+}
 .mini-row-open {
   color: var(--ink-4);
 }
@@ -1468,6 +1472,57 @@ a.mini-row:hover::before {
   background: var(--panel);
   min-width: 0;
 }
+.board-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+}
+.board-tabs button {
+  position: relative;
+  flex: 1;
+  min-height: 3rem;
+  padding: 0 1.25rem;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 160ms ease, background 160ms ease;
+}
+.board-tabs button:last-child {
+  border-right: 0;
+}
+.board-tabs button:hover {
+  color: var(--ink);
+  background: rgb(255 255 255 / 0.025);
+}
+.board-tabs button[aria-selected="true"] {
+  color: var(--ink);
+  background: rgb(var(--signal-rgb) / 0.06);
+}
+.board-tabs button::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 2px;
+  background: var(--signal);
+  transform: scaleX(0);
+  transition: transform 320ms var(--ease-out);
+}
+.board-tabs button[aria-selected="true"]::after {
+  transform: scaleX(1);
+}
+@media (min-width: 720px) {
+  .board-tabs button {
+    flex: 0 0 auto;
+    min-width: 8.5rem;
+  }
+}
+
 .prompt-line {
   display: flex;
   flex-wrap: wrap;
@@ -1647,11 +1702,29 @@ button.board-row:focus-visible::before {
 .board-row[data-rank="1"] .col-rate b {
   color: var(--signal);
 }
+.col-rate b.na {
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
 .rate-bar {
+  position: relative;
   display: block;
   height: 2px;
-  margin-top: 0.4rem;
+  margin-top: 0.5rem;
   background: rgb(255 255 255 / 0.08);
+}
+/* 95% range around the win rate: wide means few runs */
+.rate-bar u {
+  position: absolute;
+  top: -2px;
+  left: var(--low, 0%);
+  width: calc(var(--high, 0%) - var(--low, 0%));
+  height: 6px;
+  background: rgb(var(--signal-rgb) / 0.16);
+  border-inline: 1px solid rgb(var(--signal-rgb) / 0.5);
 }
 .rate-bar i {
   display: block;
@@ -1668,6 +1741,26 @@ button.board-row:focus-visible::before {
   font-family: var(--font-mono);
   font-size: 0.625rem;
   letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+.flag,
+.col-rate small.flag {
+  font-style: normal;
+  color: var(--ember);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.board-row-unranked .col-model strong {
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.board-row-unranked .col-rate b {
+  color: var(--ink-2);
+}
+.champion-facts dd small {
+  margin-left: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 400;
   color: var(--ink-3);
 }
 .col-open {
@@ -1689,13 +1782,16 @@ button.board-row:hover .col-open {
   .board-row > .col-open {
     display: block;
   }
-  .col-rate small {
+  .col-rate small:not(.keep):not(.flag) {
     display: none;
   }
 }
 @media (min-width: 1240px) {
   .board-row {
-    grid-template-columns: 2.8rem minmax(9rem, 1fr) 3.6rem 5.5rem 5rem 4rem 6.2rem 1rem;
+    grid-template-columns: 2.8rem minmax(9rem, 1fr) 4.2rem 6rem 5.2rem 5.2rem 5.8rem 1rem;
+  }
+  .col-rate small.keep:not(.flag) {
+    display: none;
   }
   .board-row > .col-decisions,
   .board-row > .col-cost,
@@ -1711,6 +1807,9 @@ button.board-row:hover .col-open {
   gap: 1rem;
   padding: 0.75rem 1.25rem;
   border-bottom: 1px solid var(--line);
+  background: rgb(255 255 255 / 0.02);
+}
+.board-divider-soon {
   background: rgb(var(--ember-rgb) / 0.035);
 }
 .board-row-queued {
@@ -1853,16 +1952,23 @@ button.board-row:hover .col-open {
   gap: 0;
   border-top: 1px solid var(--line);
 }
-@media (min-width: 860px) {
+@media (min-width: 640px) {
   .note-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 3rem;
+  }
+}
+@media (min-width: 1080px) {
+  .note-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 0;
   }
 }
 .note {
-  padding: 1.5rem 1.5rem 1.5rem 0;
+  padding: 1.5rem 0;
   border-bottom: 1px solid var(--line);
 }
-@media (min-width: 860px) {
+@media (min-width: 1080px) {
   .note {
     padding: 1.5rem;
     border-right: 1px solid var(--line);

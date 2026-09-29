@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(r"C:\Users\natha\code\jev-plays-starcraft-2\runs")
@@ -57,6 +58,105 @@ def guide_label(control: dict, verification: dict, run_dir: Path) -> str | None:
     return control.get("guide_model") or verification.get("guide")
 
 
+def percentile(values: list, fraction: float):
+    """Nearest-rank percentile; None when there is nothing to rank."""
+    if not values:
+        return None
+    ordered = sorted(values)
+    index = min(len(ordered) - 1, max(0, round(fraction * len(ordered) + 0.5) - 1))
+    return ordered[index]
+
+
+def decision_stats(run_dir: Path) -> dict:
+    """Measured decision latency, run time and guide spend from the controller log.
+
+    Early runs carry no log; every field stays None for them.
+    """
+    stats = {
+        "latencyP50": None,
+        "latencyP90": None,
+        "durationSec": None,
+        "guideCalls": None,
+        "guideCost": None,
+    }
+    log = run_dir / "controller.jsonl"
+    if not log.exists():
+        return stats
+    latencies = []
+    guide_calls = 0
+    guide_cost = 0.0
+    started = finished = None
+    try:
+        with open(log, encoding="utf-8") as fh:
+            for line in fh:
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                event = row.get("event")
+                if event == "jev":
+                    if isinstance(row.get("latency_ms"), (int, float)):
+                        latencies.append(row["latency_ms"])
+                elif event == "guide":
+                    guide_calls += 1
+                    guide_cost += row.get("cost") or 0
+                elif event == "joined_game" and started is None:
+                    started = row.get("time")
+                elif event == "finished":
+                    finished = row.get("time")
+    except OSError:
+        return stats
+    stats["latencyP50"] = percentile(latencies, 0.5)
+    stats["latencyP90"] = percentile(latencies, 0.9)
+    if started is not None and finished is not None and finished > started:
+        stats["durationSec"] = round(finished - started)
+    stats["guideCalls"] = guide_calls
+    stats["guideCost"] = round(guide_cost, 6)
+    return stats
+
+
+USAGE_RE = re.compile(r'"usage": \{"input_tokens": (\d+), "output_tokens": (\d+)')
+
+
+def token_usage(run_dir: Path) -> dict:
+    """Tokens the decision model consumed, summed over every decision in events.jsonl.
+
+    Every route reports tokens, but only some return a bill. The site prices the
+    rest from these counts at the provider's published rate.
+    """
+    totals = {"inputTokens": None, "outputTokens": None}
+    log = run_dir / "events.jsonl"
+    if not log.exists():
+        return totals
+    input_tokens = output_tokens = counted = 0
+    try:
+        with open(log, encoding="utf-8") as fh:
+            for line in fh:
+                if '"event": "jev"' not in line[:200]:
+                    continue
+                # Lines carry the full game state, so match the usage block before parsing.
+                match = USAGE_RE.search(line)
+                if match:
+                    input_tokens += int(match.group(1))
+                    output_tokens += int(match.group(2))
+                    counted += 1
+                    continue
+                try:
+                    usage = (json.loads(line).get("response") or {}).get("usage") or {}
+                except json.JSONDecodeError:
+                    continue
+                if isinstance(usage.get("input_tokens"), int):
+                    input_tokens += usage["input_tokens"]
+                    output_tokens += usage.get("output_tokens") or 0
+                    counted += 1
+    except OSError:
+        return totals
+    if counted:
+        totals["inputTokens"] = input_tokens
+        totals["outputTokens"] = output_tokens
+    return totals
+
+
 def media_for(run_dir: Path, run_id: str) -> dict:
     """Local evidence manifest. URLs resolve once the files are in R2."""
     video = run_dir / "screen-capture.mp4"
@@ -98,6 +198,8 @@ def main() -> None:
                 "objective": control.get("objective"),
                 "guide": guide_label(control, verification, result_path.parent),
                 "reason": data.get("reason"),
+                **decision_stats(result_path.parent),
+                **token_usage(result_path.parent),
                 "media": media_for(result_path.parent, result_path.parent.name),
             }
         )

@@ -32,10 +32,10 @@ function renderHeroBoard() {
     ${rows
       .map(
         (r, i) => `
-      <a class="mini-row row-in" style="--i: ${i}" data-rank="${r.rank}" href="/leaderboard?model=${encodeURIComponent(r.modelId)}"
+      <a class="mini-row row-in" style="--i: ${i}" data-rank="${r.rank}" ${r.provisional ? "data-provisional" : ""} href="/leaderboard?model=${encodeURIComponent(r.modelId)}"
          aria-label="${escapeHtml(`${r.name}, rank ${r.rank}, ${r.wins} wins from ${r.runs} runs`)}">
         <span class="mini-rank">${rank(r.rank)}</span>
-        <span class="mini-name">${escapeHtml(r.name)}<small>${escapeHtml(r.by)}</small></span>
+        <span class="mini-name">${escapeHtml(r.name)}<small>${r.provisional ? `<em class="flag">Provisional · ${r.runs} ${r.runs === 1 ? "run" : "runs"}</em>` : escapeHtml(r.by)}</small></span>
         <span class="mini-record">${r.wins}–${r.runs - r.wins}</span>
         <span class="mini-rate">${fmtPct(r.rate)}</span>
       </a>`

@@ -41,32 +41,31 @@ const MODELS = {
     name: "TypeSafe Jev 1.13",
     by: "TypeSafe",
     access: "Hosted API",
-    latency: "70–500 ms",
-    latencyBasis: "vendor-reported",
+    vendorLatency: "70–500 ms",
     price: "$0.042 / MTok",
+    // USD per million tokens, from TypeSafe's published rates. Output is not billed.
+    priceIn: 0.042,
+    priceOut: 0,
   },
   "localjev-latest": {
     name: "LocalJev",
     by: "Self-hosted · qwen3.5:4b",
     access: "Self-hosted",
-    latency: "1–45 s",
-    latencyBasis: "measured",
+    vendorLatency: null,
     price: "Free",
   },
   "openjev-latest": {
     name: "OpenJev",
     by: "Open source",
     access: "Self-hosted",
-    latency: null,
-    latencyBasis: null,
+    vendorLatency: null,
     price: "Free",
   },
   "jev-latest": {
     name: "jeff",
     by: "GLiFormer · self-hosted",
     access: "Self-hosted",
-    latency: "0.6–1.9 s",
-    latencyBasis: "measured",
+    vendorLatency: null,
     price: "Free",
   },
 };
@@ -84,6 +83,21 @@ const ROUTE_LABELS = {
   openrouter: "OpenRouter",
   openjev: "Self-hosted",
 };
+
+/**
+ * Where a run's model cost comes from.
+ *   billed      — the route returned a bill with each decision
+ *   priced      — the route returned token counts only; cost is tokens at the published rate
+ *   self-hosted — no per-decision fee
+ */
+const BILLING = {
+  openrouter: "billed",
+  typesafe: "priced",
+  openjev: "self-hosted",
+};
+
+/** A win rate from fewer runs than this is marked provisional. */
+export const MIN_RUNS = 5;
 
 const VERIFIED_BY = {
   objective_building_health: "Objective destroyed",
@@ -104,6 +118,23 @@ export function fmtMoney(n) {
   const v = Number(n);
   if (v === 0) return "—";
   return v < 0.1 ? `$${v.toFixed(3)}` : `$${v.toFixed(2)}`;
+}
+
+export function fmtLatency(ms) {
+  if (ms == null || Number.isNaN(Number(ms))) return "—";
+  const v = Number(ms);
+  if (v < 1000) return `${Math.round(v)} ms`;
+  if (v < 10000) return `${(v / 1000).toFixed(1)} s`;
+  return `${Math.round(v / 1000)} s`;
+}
+
+export function fmtDuration(seconds) {
+  if (seconds == null || Number.isNaN(Number(seconds))) return "—";
+  const total = Math.round(Number(seconds));
+  const m = Math.floor(total / 60);
+  const sec = total % 60;
+  if (m >= 60) return `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, "0")}m`;
+  return m ? `${m}m ${String(sec).padStart(2, "0")}s` : `${sec}s`;
 }
 
 export function fmtPct(rate) {
@@ -128,7 +159,7 @@ function helperLabel(raw) {
 }
 
 export function modelMeta(id) {
-  return MODELS[id] || { name: id || "Unattributed", by: "", access: "", latency: null, latencyBasis: null, price: null };
+  return MODELS[id] || { name: id || "Unattributed", by: "", access: "", vendorLatency: null, price: null };
 }
 
 /* —— outcomes in plain language —— */
@@ -154,8 +185,26 @@ function mcOutcome(run) {
 
 /* —— normalised runs —— */
 
+/** Tokens at the model's published rate. On billed routes this matches the bill to the cent. */
+function pricedCost(run) {
+  const meta = MODELS[run.model];
+  if (!meta || meta.priceIn == null || run.inputTokens == null) return null;
+  return (run.inputTokens * meta.priceIn + (run.outputTokens || 0) * (meta.priceOut || 0)) / 1e6;
+}
+
+function modelCostOf(run, billing) {
+  if (billing === "self-hosted") return { modelCost: 0, costBasis: "Self-hosted" };
+  if (run.cost > 0) return { modelCost: run.cost, costBasis: "Billed" };
+  const priced = pricedCost(run);
+  if (priced != null) return { modelCost: priced, costBasis: "Published rate × tokens" };
+  return { modelCost: null, costBasis: null };
+}
+
 function normaliseSc2(run) {
   const won = run.status === "victory";
+  const billing = BILLING[run.via] || null;
+  const { modelCost, costBasis } = modelCostOf(run, billing);
+  const guideCost = run.guideCost ?? null;
   return {
     id: run.id,
     game: "sc2",
@@ -168,7 +217,15 @@ function normaliseSc2(run) {
     helperRole: "Guide",
     route: ROUTE_LABELS[run.via] || null,
     decisions: run.calls,
-    cost: run.cost || null,
+    billing,
+    modelCost,
+    costBasis,
+    guideCost,
+    totalCost: modelCost == null || guideCost == null ? null : modelCost + guideCost,
+    inputTokens: run.inputTokens ?? null,
+    latencyP50: run.latencyP50 ?? null,
+    latencyP90: run.latencyP90 ?? null,
+    durationSec: run.durationSec ?? null,
     version: run.stateMode === "compact" ? "v2" : "v1",
     verifiedBy: won ? VERIFIED_BY[run.source] || "Game signal" : null,
     note: run.reason || null,
@@ -190,7 +247,15 @@ function normaliseMc(run) {
     helperRole: "Planner",
     route: null,
     decisions: run.steps,
-    cost: null,
+    billing: null,
+    modelCost: null,
+    costBasis: null,
+    guideCost: null,
+    totalCost: null,
+    inputTokens: null,
+    latencyP50: null,
+    latencyP90: null,
+    durationSec: run.durationSec ?? null,
     version: null,
     verifiedBy: won ? "Dragon defeated, exit portal reached" : null,
     note: run.note || null,
@@ -209,12 +274,21 @@ export function hasMedia(run) {
 
 /* —— run queries (used by the run drawer) —— */
 
-export function queryRuns({ game, modelId, runId, unattributed = false, version = "all", outcome = "all" } = {}) {
+export function queryRuns({
+  game,
+  modelId,
+  route,
+  runId,
+  unattributed = false,
+  version = "all",
+  outcome = "all",
+} = {}) {
   return RUNS.filter((r) => {
     if (runId) return r.id === runId;
     if (game && r.game !== game) return false;
     if (unattributed !== !r.modelId) return false;
     if (modelId && r.modelId !== modelId) return false;
+    if (route && r.route !== route) return false;
     if (version !== "all" && r.version !== version) return false;
     if (outcome === "wins" && !r.won) return false;
     if (outcome === "other" && r.won) return false;
@@ -228,6 +302,48 @@ function average(list) {
   return list.length ? list.reduce((a, b) => a + b, 0) / list.length : null;
 }
 
+function median(list) {
+  const sorted = list.filter((n) => n != null).sort((a, b) => a - b);
+  if (!sorted.length) return null;
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+/** 95% Wilson interval for a win rate: honest about small samples. */
+function wilson(wins, runs) {
+  if (!runs) return [0, 1];
+  const z = 1.96;
+  const p = wins / runs;
+  const denom = 1 + (z * z) / runs;
+  const centre = (p + (z * z) / (2 * runs)) / denom;
+  const half = (z * Math.sqrt((p * (1 - p)) / runs + (z * z) / (4 * runs * runs))) / denom;
+  return [Math.max(0, centre - half), Math.min(1, centre + half)];
+}
+
+/** Median latency per route, fastest first. The same model answers at different speeds on different routes. */
+function routeLatency(runs) {
+  const byRoute = new Map();
+  for (const run of runs) {
+    if (!run.route || run.latencyP50 == null) continue;
+    if (!byRoute.has(run.route)) byRoute.set(run.route, []);
+    byRoute.get(run.route).push(run);
+  }
+  return [...byRoute.entries()]
+    .map(([route, list]) => ({
+      route,
+      latencyP50: median(list.map((r) => r.latencyP50)),
+      latencyP90: median(list.map((r) => r.latencyP90)),
+      runs: list.length,
+    }))
+    .sort((a, b) => a.latencyP50 - b.latencyP50);
+}
+
+/** The measure each board view ranks by. Lower is better for speed and cost. */
+const VIEW_METRIC = {
+  speed: (row) => row.latencyP50,
+  cost: (row) => row.costPerWin,
+};
+
 function longestStreak(runs) {
   const dated = runs.filter((r) => r.date).sort((a, b) => a.date - b.date);
   let best = 0;
@@ -239,19 +355,27 @@ function longestStreak(runs) {
   return best;
 }
 
-export function standings(game, { version = "all" } = {}) {
+export function standings(game, { version = "all", by = "wins" } = {}) {
+  // Speed and cost belong to a model on a route, so those views keep routes apart.
+  const perRoute = Boolean(VIEW_METRIC[by]);
   const groups = new Map();
   for (const run of RANKED_RUNS) {
     if (run.game !== game) continue;
     if (version !== "all" && run.version !== version) continue;
-    if (!groups.has(run.modelId)) groups.set(run.modelId, []);
-    groups.get(run.modelId).push(run);
+    const key = perRoute ? `${run.modelId}|${run.route || ""}` : run.modelId;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(run);
   }
 
-  const rows = [...groups.entries()].map(([modelId, runs]) => {
+  const rows = [...groups.values()].map((runs) => {
+    const modelId = runs[0].modelId;
+    const routes = routeLatency(runs);
     const wins = runs.filter((r) => r.won);
     const winDecisions = wins.map((r) => r.decisions).filter((n) => n != null);
-    const winCosts = wins.map((r) => r.cost).filter((n) => n != null && n > 0);
+    const costedWins = wins.filter((r) => r.totalCost != null);
+    const metered = runs.filter((r) => r.billing !== "self-hosted" && r.modelCost != null && r.decisions);
+    const selfHosted = runs.length > 0 && runs.every((r) => r.billing === "self-hosted");
+    const [rateLow, rateHigh] = wilson(wins.length, runs.length);
     const helpers = [...new Set(runs.map((r) => r.helper).filter((h) => h && h !== "None"))];
     const dates = runs.map((r) => r.date).filter(Boolean);
     return {
@@ -263,16 +387,45 @@ export function standings(game, { version = "all" } = {}) {
       wins: wins.length,
       runs: runs.length,
       rate: runs.length ? wins.length / runs.length : 0,
+      rateLow,
+      rateHigh,
+      provisional: runs.length < MIN_RUNS,
       avgDecisions: average(winDecisions),
       bestDecisions: winDecisions.length ? Math.min(...winDecisions) : null,
-      avgCost: average(winCosts),
+      route: perRoute ? runs[0].route : null,
+      billing: perRoute ? runs[0].billing : null,
+      // Across routes, a model is credited with its fastest one.
+      latencyP50: routes.length ? routes[0].latencyP50 : null,
+      latencyP90: routes.length ? routes[0].latencyP90 : null,
+      routes,
+      timeToWin: median(wins.map((r) => r.durationSec)),
+      costPerWin: average(costedWins.map((r) => r.totalCost)),
+      guideCostPerWin: average(costedWins.map((r) => r.guideCost)),
+      modelCostPer1k: selfHosted
+        ? 0
+        : metered.length
+          ? (1000 * metered.reduce((sum, r) => sum + r.modelCost, 0)) / metered.reduce((sum, r) => sum + r.decisions, 0)
+          : null,
+      selfHosted,
       streak: longestStreak(runs),
       lastRun: dates.length ? new Date(Math.max(...dates)) : null,
     };
   });
 
-  rows.sort((a, b) => b.wins - a.wins || b.rate - a.rate || b.runs - a.runs || a.name.localeCompare(b.name));
-  return rows.map((row, i) => ({ ...row, rank: i + 1 }));
+  const byWins = (a, b) => b.wins - a.wins || b.rate - a.rate || b.runs - a.runs || a.name.localeCompare(b.name);
+  const metric = VIEW_METRIC[by];
+  if (!metric) {
+    return rows.sort(byWins).map((row, i) => ({ ...row, rank: i + 1 }));
+  }
+
+  // Speed and cost only rank models that have won: a fast or cheap loss proves nothing.
+  const ranked = rows
+    .filter((row) => row.wins > 0 && metric(row) != null)
+    .sort((a, b) => metric(a) - metric(b) || byWins(a, b));
+  const unranked = rows
+    .filter((row) => !ranked.includes(row))
+    .sort((a, b) => (metric(a) ?? Infinity) - (metric(b) ?? Infinity) || byWins(a, b));
+  return [...ranked.map((row, i) => ({ ...row, rank: i + 1 })), ...unranked.map((row) => ({ ...row, rank: null }))];
 }
 
 /* —— headline numbers —— */
@@ -335,13 +488,15 @@ export function records() {
     });
   }
 
-  const cheapest = sc2Wins.filter((r) => r.cost > 0).sort((a, b) => a.cost - b.cost)[0];
+  const cheapest = sc2Wins
+    .filter((r) => r.billing !== "self-hosted" && r.totalCost > 0)
+    .sort((a, b) => a.totalCost - b.totalCost)[0];
   if (cheapest) {
     out.push({
       key: "cheapest",
       label: "Lowest-cost win",
-      value: fmtMoney(cheapest.cost),
-      unit: "total spend",
+      value: fmtMoney(cheapest.totalCost),
+      unit: "model and guide spend",
       holder: modelMeta(cheapest.modelId).name,
       context: `${fmtInt(cheapest.decisions)} decisions · ${fmtDate(cheapest.date)}`,
       run: cheapest,
@@ -401,6 +556,7 @@ export const ROADMAP = [
     items: [
       { name: "StarCraft II · Liberation Day", text: "Full campaign mission, scored on a verified objective." },
       { name: "Minecraft · Ender Dragon", text: "From first chest to the exit portal, with full-run video." },
+      { name: "Speed and cost boards", text: "Latency measured on every decision, and what each win cost." },
       { name: "Run evidence", text: "Every run published, wins and losses, with stills and footage where captured." },
       { name: "Open harness", text: "The StarCraft II harness is open source. Run it yourself." },
     ],
@@ -411,7 +567,6 @@ export const ROADMAP = [
     status: "Coming soon",
     items: [
       { name: "More models", text: "Laya, NanoJev, djev and OpenJev Browser are queued for their first scored games." },
-      { name: "Speed and cost boards", text: "Measured latency and spend per win, ranked side by side." },
       { name: "Replays on every win", text: "Video and downloadable run files attached to each verified result." },
     ],
   },

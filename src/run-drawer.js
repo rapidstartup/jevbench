@@ -1,6 +1,6 @@
 /** Slide-over listing the runs behind a leaderboard row, record or evidence card. */
 
-import { GAMES, fmtDate, fmtInt, fmtMoney, modelMeta, queryRuns } from "./bench.js";
+import { GAMES, fmtDate, fmtDuration, fmtInt, fmtLatency, fmtMoney, modelMeta, queryRuns } from "./bench.js";
 import { escapeHtml, stillImg } from "./ui.js";
 
 const CHIPS = [
@@ -57,9 +57,14 @@ function mediaBlock(run) {
 function renderCard(run, i) {
   const game = GAMES[run.game];
   const unit = game.unit === "steps" ? "Steps" : "Decisions";
+  const modelCost = run.billing === "self-hosted" ? "Free" : fmtMoney(run.modelCost);
   const facts = [
     [unit, fmtInt(run.decisions)],
-    ["Cost", fmtMoney(run.cost)],
+    ["Median latency", fmtLatency(run.latencyP50)],
+    ["Run time", fmtDuration(run.durationSec)],
+    ["Model cost", modelCost],
+    ["Guide cost", run.guideCost ? fmtMoney(run.guideCost) : null],
+    ["Cost basis", run.billing === "self-hosted" ? null : run.costBasis],
     [run.helperRole, run.helper],
     ["Route", run.route],
     ["Bench", run.version],

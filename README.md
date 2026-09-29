@@ -18,6 +18,7 @@ Shared header and footer live in `partials/` and are inlined by `vite.config.js`
 Every number on the site is derived in `src/bench.js` from the generated run files
 (`src/sc2-runs.js`, `src/minecraft-runs.js`). Regenerate those with the scripts in
 `scripts/` and the standings, records and headline counts update on the next build.
+Decision latency, run time and guide spend are read from each run's controller log.
 
 Hand-written content in `src/bench.js`: model names and pricing (`MODELS`), models
 awaiting a first scored game (`QUEUE`) and the roadmap (`ROADMAP`).
