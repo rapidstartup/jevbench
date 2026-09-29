@@ -194,10 +194,12 @@ function pricedCost(run) {
 
 function modelCostOf(run, billing) {
   if (billing === "self-hosted") return { modelCost: 0, costBasis: "Self-hosted" };
-  if (run.cost > 0) return { modelCost: run.cost, costBasis: "Billed" };
-  const priced = pricedCost(run);
-  if (priced != null) return { modelCost: priced, costBasis: "Published rate × tokens" };
-  return { modelCost: null, costBasis: null };
+  // The harness prices direct API runs itself now; runs from before that recorded no cost.
+  const recorded = run.cost > 0 ? run.cost : null;
+  const modelCost = recorded ?? pricedCost(run);
+  if (modelCost == null) return { modelCost: null, costBasis: null };
+  const billed = recorded != null && billing !== "priced";
+  return { modelCost, costBasis: billed ? "Billed" : "Published rate × tokens" };
 }
 
 function normaliseSc2(run) {
